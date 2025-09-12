@@ -89,7 +89,7 @@ jobs:
         run: |
           deno install -A --global jsr:@deno/deployctl
           deployctl deploy \
-            --project=kumak-blog \
+            --project=devblog \
             --token=${{ secrets.DENO_DEPLOY_TOKEN }} \
             --include=./dist \
             --exclude=node_modules \

@@ -19,7 +19,7 @@
     "preview": "deno task preview-urls && deno task preview-serve",
     "preview-serve": "deno run --allow-net --allow-read jsr:@std/http/file-server dist --port 4321",
     "preview-urls": "echo '🚀 Preview server starting...' && echo '📍 Local: http://localhost:4321' && echo '📍 Network: http://'$(ipconfig getifaddr en0 2>/dev/null || echo 'localhost')':4321' && echo ''",
-    "deploy": "deno task build && cd dist && deployctl deploy --project=kumak-blog --prod --entrypoint=jsr:@std/http/file-server",
+    "deploy": "deno task build && cd dist && deployctl deploy --project=devblog --prod --entrypoint=jsr:@std/http/file-server",
     "deploy-cli": "deno install -A --global jsr:@deno/deployctl && deno task deploy",
     "lint": "deno lint",
     "format": "deno fmt",
@@ -138,7 +138,7 @@
   },
   "lock": false,
   "deploy": {
-    "project": "a8246023-a10c-4a50-9a25-adc312f14421",
+    "project": "devblog",
     "exclude": [
       "**/node_modules"
     ],
