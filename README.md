@@ -1,16 +1,8 @@
-# Astro Starter Kit: Blog
+# Kumak's Blog
 
-```sh
-deno create astro@latest -- --template blog
-```
+> Personal blog built with Astro, powered by Deno, and deployed to Deno Deploy.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/blog)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/blog)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/blog/devcontainer.json)
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![blog](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
+[![Deploy Status](https://github.com/szymdzum/blog/workflows/CI/CD/badge.svg)](https://github.com/szymdzum/blog/actions)
 
 Features:
 
@@ -21,56 +13,78 @@ Features:
 - ✅ RSS Feed support
 - ✅ Markdown & MDX support
 
-## 🚀 Project Structure
+## 🚀 Tech Stack
 
-Inside of your Astro project, you'll see the following folders and files:
+- **Framework**: [Astro](https://astro.build) - Fast, content-focused web framework
+- **Runtime**: [Deno](https://deno.com) - Secure JavaScript/TypeScript runtime
+- **Hosting**: [Deno Deploy](https://deno.com/deploy) - Global edge deployment
+- **Styling**: CSS with modern features and design tokens
+- **Content**: Markdown with frontmatter and content collections
+
+## 📁 Project Structure
 
 ```text
-├── public/
+├── .github/           # GitHub workflows and templates
+├── public/            # Static assets
 ├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+│   ├── components/    # Reusable UI components (.astro)
+│   ├── content/       # Content collections & schemas
+│   ├── layouts/       # Page templates
+│   ├── pages/         # File-based routes
+│   ├── styles/        # Global CSS
+│   └── utils/         # TypeScript utilities
+├── tests/             # Test files
+├── astro.config.mjs   # Astro configuration
+├── deno.json          # Deno configuration & tasks
+└── site-config.ts     # Site metadata
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page
-is exposed as a route based on its file name.
+## 🧞 Development Commands
 
-There's nothing special about `src/components/`, but that's where we like to put
-any Astro/React/Vue/Svelte/Preact components.
+All commands use Deno tasks defined in `deno.json`:
 
-The `src/content/` directory contains "collections" of related Markdown and MDX
-documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and
-type-check your frontmatter using an optional schema. See
-[Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/)
-to learn more.
+| Command              | Action                                    |
+| :------------------- | :---------------------------------------- |
+| `deno task dev`      | Start development server                 |
+| `deno task build`    | Build production site                    |
+| `deno task preview`  | Preview production build locally         |
+| `deno task deploy`   | Deploy to Deno Deploy                    |
+| `deno task test`     | Run all tests                            |
+| `deno task lint`     | Lint code with Deno                      |
+| `deno task format`   | Format code with Deno                    |
+| `deno task check-all`| Run all checks (lint + format + astro)   |
 
-Any static assets, like images, can be placed in the `public/` directory.
+## 🚀 Quick Start
 
-## 🧞 Commands
+```bash
+# Clone the repository
+git clone https://github.com/szymdzum/blog.git
+cd blog
 
-All commands are run from the root of the project, from a terminal:
+# Start development server
+deno task dev
 
-| Command                | Action                                           |
-| :--------------------- | :----------------------------------------------- |
-| `deno install`         | Installs dependencies                            |
-| `deno dev`             | Starts local dev server at `localhost:4321`      |
-| `deno build`           | Build your production site to `./dist/`          |
-| `deno preview`         | Preview your build locally, before deploying     |
-| `deno astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `deno astro -- --help` | Get help using the Astro CLI                     |
+# Build for production
+deno task build
 
-## 👀 Want to learn more?
+# Deploy to production
+deno task deploy
+```
 
-Check out [our documentation](https://docs.astro.build) or jump into our
-[Discord server](https://astro.build/chat).
+## 📜 Contributing
 
-## Credit
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for development workflow and guidelines.
 
-This theme is based off of the lovely
-[Bear Blog](https://github.com/HermanMartinus/bearblog/).
+## 🚀 Deployment
+
+The site is automatically deployed to [Deno Deploy](https://deno.com/deploy) on every push to `main`. The deployment is handled by GitHub Actions.
+
+**Live Site**: [kumak.dev](https://kumak.dev) (coming soon)
+
+## 📝 License
+
+MIT License - see [LICENSE](./LICENSE) for details.
+
+---
+
+**Credits**: This blog is built on the excellent [Astro Blog Template](https://github.com/withastro/astro/tree/main/examples/blog) and inspired by [Bear Blog](https://github.com/HermanMartinus/bearblog/).
