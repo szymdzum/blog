@@ -61,45 +61,5 @@ jobs:
           path: dist/
           retention-days: 30
 
-  deploy:
-    name: 'Deploy to Deno Deploy'
-    needs: quality-gates
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v2.x
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: dist/
-
-      - name: Deploy to Deno Deploy
-        run: |
-          deno install -A --global jsr:@deno/deployctl
-          deployctl deploy \
-            --project=devblog \
-            --token=${{ secrets.DENO_DEPLOY_TOKEN }} \
-            --include=./dist \
-            --exclude=node_modules \
-            --entrypoint=https://deno.land/std/http/file_server.ts
-
-      - name: Create deployment status
-        if: always()
-        run: |
-          if [ "${{ job.status }}" == "success" ]; then
-            echo "✅ Deployment successful"
-          else
-            echo "❌ Deployment failed"
-          fi
+  # Note: Deployment is handled automatically by Deno Deploy Early Access
+  # via GitHub integration. No manual deployment step needed.
