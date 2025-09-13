@@ -83,3 +83,4 @@ See [@.claude/code-guide.md](.claude/code-guide.md) for detailed conventions:
 - CSS architecture and design tokens  
 - Testing and documentation standards
 - Performance and accessibility guidelines
+- dont make inline  comments be token efficient
