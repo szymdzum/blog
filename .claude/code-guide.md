@@ -12,7 +12,16 @@
 
 ## Layout Architecture
 
-### CSS Grid Layout
+### Harmonic Design System
+
+The entire layout is built on **mathematical harmony** using a unified 1.25 ratio (Major Third):
+
+- **Typography Scale**: All text sizes derive from harmonic ratios
+- **Spacing Scale**: All margins, padding, gaps use same harmonic progression
+- **Vertical Rhythm**: Text spacing based on line-height multiples
+- **No Container Divs**: Clean, semantic HTML without wrapper pollution
+
+### CSS Grid + Flexbox Hybrid
 
 ```css
 /* Sticky footer pattern */
@@ -20,6 +29,23 @@ body {
   display: grid;
   grid-template-rows: auto 1fr auto;
   min-height: 100dvh;
+}
+
+/* Main content uses named grid lines */
+body > main {
+  display: grid;
+  grid-template-columns:
+    [full-start] 1fr
+    [content-start] min(100% - 2 * var(--container-padding), var(--content-width)) [content-end]
+    1fr [full-end];
+}
+
+/* Header/Footer use flexbox for horizontal alignment */
+body > header,
+body > footer {
+  padding-inline: var(--content-padding);
+  display: flex;
+  align-items: center;
 }
 ```
 
@@ -34,11 +60,20 @@ body > footer              /* Site footer */
 footer nav                 /* Social navigation */
 ```
 
+### Layout Principles
+
+- **No Container Divs**: Use CSS Grid named lines and flexbox instead
+- **Consistent Padding**: All components use `var(--content-padding)`
+- **Flexbox for Horizontal**: Header/footer use flexbox for alignment
+- **Grid for Complex**: Main content uses named grid lines
+- **Harmonic Spacing**: All measurements follow 1.25 ratio progression
+
 ### Component Rules
 
 - **Layout components**: No `<style>` tags, use global.css
 - **Content components**: Scoped styles allowed
-- **Classes**: Only utilities (`.container`, `.visually-hidden`)
+- **No wrapper divs**: Use native CSS layout instead of containers
+- **Classes**: Minimal utilities only (`.flow`, `.text-center`)
 
 ## TypeScript Conventions
 
