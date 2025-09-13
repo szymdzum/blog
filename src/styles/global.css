@@ -442,7 +442,6 @@ aside > nav {
    ARIA-based Styles
    =========================== */
 
-
 /* Disabled state */
 [aria-disabled='true'] {
   opacity: 0.5;
@@ -613,7 +612,6 @@ footer nav a {
   width: 2.5rem;
   height: 2.5rem;
 }
-
 
 /* ===========================
    Responsive Layout
