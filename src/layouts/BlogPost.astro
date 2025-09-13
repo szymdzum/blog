@@ -25,7 +25,10 @@ const {
 const readingTime = formatReadingTime(body);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout
+  title={title}
+  description={description}
+>
   <article class="article">
     {heroImage && (
       <figure class="hero-image">
