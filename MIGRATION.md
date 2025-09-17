@@ -46,8 +46,7 @@ blog/
 │   ├── deploy.sh              # Automated deployment
 │   └── validate-domain.sh     # Post-migration validation
 ├── deno.deploy.json           # Deno Deploy EA configuration
-├── .env.template              # Environment template
-├── .env.local                 # Local development config
+├── .env.example               # Environment template
 └── MIGRATION.md               # This documentation
 ```
 
@@ -69,7 +68,7 @@ blog/
 
 #### Environment Variables
 ```bash
-DENO_DEPLOY_TOKEN=ddp_6SNnIDvommOcGb440rkSwhgBu6F6W52SSMqQ
+# Deno Deploy EA uses GitHub integration - no manual tokens needed
 DOMAIN=kumak.dev
 WWW_DOMAIN=www.kumak.dev
 ```

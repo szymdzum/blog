@@ -68,10 +68,10 @@ PR Merge → GitHub Actions Quality Gates → EA Auto-Deploy → Live Site Updat
 - Renamed `deploy-cli` → `deploy-cli-legacy`
 - EA uses integrated build system, not manual deployctl
 
-### Legacy Configuration (Preserved)
-- `deno.deploy.json` - kept for reference
-- `.env.local` - Classic Deploy token preserved
-- `scripts/deploy.sh` - manual deployment script preserved
+### Legacy Configuration (REMOVED)
+- ✅ `deno.deploy.json` - deleted (no longer needed)
+- ✅ `.env.local` - deleted (EA uses GitHub integration)
+- ✅ `scripts/deploy.sh` - deleted (EA has integrated deployment)
 
 ## Performance Comparison
 
