@@ -3,7 +3,7 @@ title: 'The Comprehensive Markdown Reference Guide'
 description: 'Master the art of Markdown formatting with this definitive guide. Learn how to structure content with headings, format text, create lists, add images, and implement advanced features like tables and code blocks.'
 pubDate: 'Jun 19 2024'
 category: 'tutorial'
-heroImage: '/blog-placeholder-1.jpg'
+heroImage: '/blog/images/markdown-guide.jpg'
 ---
 
 Here is a sample of some basic Markdown syntax that can be used when writing
@@ -52,7 +52,7 @@ sapicia is sinveli squiatum, core et que aut hariosam ex eat.
 
 ### Output
 
-![blog placeholder](/blog-placeholder-about.jpg)
+![blog placeholder](/blog/images/markdown-guide.jpg)
 
 ## Blockquotes
 

@@ -1,14 +1,15 @@
 # Current Blog Configuration
 
-**Documentation Date**: September 17, 2025  
-**Status**: ✅ Deno Deploy Early Access - Fully Migrated & Optimized  
-**Site**: https://kumak.dev  
+**Documentation Date**: September 17, 2025\
+**Status**: ✅ Deno Deploy Early Access - Fully Migrated & Optimized\
+**Site**: https://kumak.dev
 
 ## 🎯 System Overview
 
 The blog runs on **Deno Deploy Early Access** with automated CI/CD, delivering a high-performance static site with modern infrastructure and zero legacy dependencies.
 
 ### Architecture Summary
+
 ```
 GitHub Repository → GitHub Actions → Deno Deploy EA → Cloudflare CDN → Global Users
      (Source)         (CI/CD)         (Hosting)        (Edge Cache)     (Delivery)
@@ -17,6 +18,7 @@ GitHub Repository → GitHub Actions → Deno Deploy EA → Cloudflare CDN → G
 ## 🚀 Deployment Infrastructure
 
 ### Deno Deploy Early Access
+
 - **Platform**: console.deno.com (EA)
 - **Project**: `devblog`
 - **Organization**: `szymdzum`
@@ -25,8 +27,9 @@ GitHub Repository → GitHub Actions → Deno Deploy EA → Cloudflare CDN → G
 - **Performance**: 9ms avg latency, 0.00% error rate
 
 ### Domain Configuration
+
 - **Primary**: kumak.dev
-- **WWW**: www.kumak.dev  
+- **WWW**: www.kumak.dev
 - **SSL**: Let's Encrypt (auto-renewed)
 - **DNS Provider**: Cloudflare
 - **CDN**: Cloudflare proxy enabled
@@ -58,10 +61,11 @@ blog/
 ## ⚙️ Configuration Files
 
 ### Astro Configuration (`astro.config.mjs`)
+
 ```javascript
 export default defineConfig({
   site: 'https://kumak.dev',
-  output: 'static',              // Static site generation
+  output: 'static', // Static site generation
   integrations: [mdx(), sitemap()],
   image: {
     service: {
@@ -82,6 +86,7 @@ export default defineConfig({
 ```
 
 ### Deno Configuration (`deno.json`)
+
 ```json
 {
   "imports": {
@@ -119,8 +124,13 @@ export default defineConfig({
     "rules": {
       "tags": ["recommended"],
       "include": [
-        "no-any", "no-explicit-any", "no-unused-vars", "prefer-const",
-        "no-inferrable-types", "ban-untagged-todo", "camelcase"
+        "no-any",
+        "no-explicit-any",
+        "no-unused-vars",
+        "prefer-const",
+        "no-inferrable-types",
+        "ban-untagged-todo",
+        "camelcase"
       ]
     },
     "exclude": ["dist/", "node_modules/", ".astro/", "coverage/"]
@@ -143,6 +153,7 @@ export default defineConfig({
 ```
 
 ### Package Configuration (`package.json`)
+
 ```json
 {
   "name": "@szymdzum/blog",
@@ -167,6 +178,7 @@ export default defineConfig({
 ```
 
 ### Environment Configuration (`.env.example`)
+
 ```bash
 # Site Configuration
 SITE_URL=https://kumak.dev
@@ -182,10 +194,12 @@ GITHUB_TOKEN=ghp_your_token_here
 ### GitHub Actions Workflow (`.github/workflows/ci-cd.yml`)
 
 **Triggers:**
+
 - Push to `main` branch
 - Pull requests to `main` branch
 
 **Quality Gates Job:**
+
 ```yaml
 quality-gates:
   runs-on: ubuntu-latest
@@ -195,7 +209,7 @@ quality-gates:
   steps:
     - Checkout repository
     - Setup Deno v2.x
-    - Cache Deno dependencies  
+    - Cache Deno dependencies
     - TypeScript validation
     - JSR-native linting
     - Code formatting check
@@ -205,19 +219,22 @@ quality-gates:
 ```
 
 **Deployment:**
+
 - **Automatic**: EA deploys when quality gates pass on `main` branch
 - **Manual**: No deployctl needed - fully integrated
 - **Monitoring**: Available at console.deno.com
 
 ### Build Performance
+
 - **Quality Gates**: ~27 seconds
-- **Total Build**: ~1 minute  
+- **Total Build**: ~1 minute
 - **Deployment**: Automatic (integrated)
 - **Total Pipeline**: <2 minutes
 
 ## 🌐 DNS & Domain Configuration
 
 ### Cloudflare DNS Records
+
 ```
 kumak.dev       → CNAME → alias.deno.net (proxied ✅)
 www.kumak.dev   → CNAME → kumak.dev (proxied ✅)
@@ -226,6 +243,7 @@ _acme-challenge.www.kumak.dev → CNAME → a6f9d42f26b4b38081ff213d6f5276a7._ac
 ```
 
 ### SSL/TLS Configuration
+
 - **Mode**: Full (Strict)
 - **Always Use HTTPS**: Disabled (to prevent redirect conflicts)
 - **Certificates**: Let's Encrypt via EA
@@ -233,6 +251,7 @@ _acme-challenge.www.kumak.dev → CNAME → a6f9d42f26b4b38081ff213d6f5276a7._ac
 - **Auto-Renewal**: 60-day cycle
 
 ### Email Configuration (Google Workspace)
+
 ```
 MX Records:
 - aspmx.l.google.com (priority 1)
@@ -249,6 +268,7 @@ TXT Records:
 ## 🧪 Testing & Quality Assurance
 
 ### Test Suite
+
 ```javascript
 // tests/routing.test.ts
 - blog routing - URL generation works correctly ✅
@@ -259,12 +279,14 @@ TXT Records:
 ```
 
 ### Quality Gates (79 Lint Rules)
+
 - **TypeScript**: Strict mode, no errors
 - **Linting**: no-any, no-explicit-any, no-unused-vars, prefer-const
 - **Formatting**: 120 char width, 2-space indent, single quotes
 - **Testing**: Deno test with file system and env permissions
 
 ### Pre-commit Hooks
+
 ```bash
 🔍 Running pre-commit checks...
 📐 Checking code formatting...
@@ -276,6 +298,7 @@ TXT Records:
 ## 📊 Performance Configuration
 
 ### Build Optimization
+
 - **HTML**: Compressed/minified
 - **CSS**: Minified, inlined for small files
 - **JavaScript**: Terser minification
@@ -283,12 +306,14 @@ TXT Records:
 - **Images**: Responsive, lazy loading, fetchpriority hints
 
 ### Caching Strategy
+
 - **Cloudflare**: Edge caching globally
 - **GitHub Actions**: Deno dependencies cached
 - **Build**: Incremental builds when possible
 - **Static Assets**: Long-term browser caching
 
 ### Performance Metrics
+
 - **Build Time**: ~1 minute (50% improvement over legacy)
 - **Page Load**: Optimized for Core Web Vitals
 - **Response Time**: 9ms average from EA
@@ -298,17 +323,20 @@ TXT Records:
 ## 🔐 Security Configuration
 
 ### Access Control
+
 - **GitHub**: Repository access via SSH keys
 - **Deno Deploy**: GitHub app integration (no manual tokens)
 - **Cloudflare**: API token with scoped permissions
 
 ### Content Security
+
 - **HTTPS**: Enforced via Cloudflare and EA
 - **SSL**: TLS 1.3, modern cipher suites
 - **Headers**: Security headers via Cloudflare
 - **Dependencies**: Regular updates via Dependabot
 
 ### Secrets Management
+
 - **Environment Variables**: GitHub Secrets for CI/CD
 - **No Plain Text**: All sensitive data in secure stores
 - **Token Rotation**: Periodic review and renewal
@@ -316,12 +344,14 @@ TXT Records:
 ## 💰 Cost Structure
 
 ### Current Usage (All Free Tiers)
+
 - **GitHub Actions**: ~100 minutes/month (of 2,000 available)
 - **Deno Deploy EA**: Well within free tier limits
 - **Cloudflare**: Free plan (sufficient for current traffic)
 - **Total Monthly Cost**: $0
 
 ### Scaling Projections
+
 - **10x Traffic**: Still within free tiers
 - **100x Traffic**: ~$20/month (Deno Deploy Pro)
 - **Enterprise**: Custom pricing as needed
@@ -329,15 +359,17 @@ TXT Records:
 ## 🔮 Available Features
 
 ### Current Active Features
+
 - ✅ Static site generation (Astro)
 - ✅ MDX content with components
 - ✅ Automated sitemap generation
-- ✅ RSS feed generation  
+- ✅ RSS feed generation
 - ✅ Multi-region deployment
 - ✅ Auto SSL certificate renewal
 - ✅ GitHub integration CI/CD
 
 ### EA Features Available (Not Yet Used)
+
 - 🔄 **Cron Jobs**: Scheduled tasks, content updates
 - 🔄 **Edge Functions**: Dynamic content at edge
 - 🔄 **KV Storage**: Key-value data storage
@@ -347,11 +379,13 @@ TXT Records:
 ## 📈 Monitoring & Analytics
 
 ### Available Dashboards
+
 - **EA Console**: https://console.deno.com (build logs, metrics, traces)
 - **GitHub Actions**: Repository Actions tab (CI/CD status)
 - **Cloudflare**: DNS, CDN, and security analytics
 
 ### Key Metrics Tracked
+
 - **Build Success Rate**: 100%
 - **Deployment Time**: <2 minutes total
 - **Site Availability**: Multi-region monitoring
@@ -361,6 +395,7 @@ TXT Records:
 ## 🛠️ Development Workflow
 
 ### Local Development
+
 ```bash
 # Start development server
 deno task dev                 # http://localhost:4321
@@ -377,6 +412,7 @@ deno task build && deno task preview
 ```
 
 ### Deployment Process
+
 ```bash
 # Automatic deployment on main branch:
 git push origin main
@@ -386,6 +422,7 @@ git push origin main
 ```
 
 ### Content Management
+
 ```bash
 # Add new blog post
 src/content/blog/new-post.md
@@ -400,16 +437,19 @@ src/layouts/*.astro
 ## 📝 Maintenance Tasks
 
 ### Regular (Weekly)
+
 - Monitor EA dashboard metrics
 - Review GitHub Actions runs
 - Check Cloudflare analytics
 
-### Periodic (Monthly)  
+### Periodic (Monthly)
+
 - Update dependencies (`deno task check-all`)
 - Review and rotate access tokens
 - Audit build performance
 
 ### Annual
+
 - Review SSL certificate renewal
 - Evaluate performance optimizations
 - Consider new EA features adoption
@@ -417,19 +457,21 @@ src/layouts/*.astro
 ## 📚 Documentation Resources
 
 ### Project Documentation
+
 - `README.md` - Project overview and setup
-- `WARP.md` - Warp terminal integration guide  
+- `WARP.md` - Warp terminal integration guide
 - `DEPLOY_EA_MIGRATION.md` - Migration process documentation
 - `OPTIMIZATION_REPORT.md` - Performance analysis
 - `CURRENT_CONFIG.md` - This configuration documentation
 
 ### External Resources
+
 - [Deno Deploy EA Documentation](https://docs.deno.com/deploy/early-access/)
 - [Astro Documentation](https://docs.astro.build/)
 - [Cloudflare Documentation](https://developers.cloudflare.com/)
 
 ---
 
-**Last Updated**: September 17, 2025  
-**Configuration Status**: ✅ Complete and Optimized  
+**Last Updated**: September 17, 2025\
+**Configuration Status**: ✅ Complete and Optimized\
 **Next Review**: October 2025 (or after major changes)

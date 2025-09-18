@@ -1,0 +1,209 @@
+---
+# ========================================
+# BLOG POST TEMPLATE
+# ========================================
+# Copy this file to create new blog posts
+# Fill in required fields, customize optional ones
+# Set draft: false when ready to publish
+
+# REQUIRED FIELDS
+# ========================================
+title: 'Your Compelling Post Title Here'
+description: 'Write an engaging SEO description under 160 characters that makes people want to click and read more about your topic.'
+pubDate: 'Jan 18 2025'
+category: 'tutorial' # Options: tutorial | opinion | project | philosophy
+
+# OPTIONAL - SEO & DISCOVERY
+# ========================================
+heroImage: '/blog/images/hero-image.jpg' # Path relative to public/ directory
+featured: false                          # Set to true for homepage featured posts
+draft: true                             # Set to false when ready to publish
+tags: ['web-development', 'astro']      # Use relevant, consistent tags
+keywords: ['long-tail keyword', 'specific phrase'] # For SEO targeting
+author: 'Szymon Dzumak'                # Author name (defaults to site owner)
+
+# OPTIONAL - CONTENT FEATURES
+# ========================================
+showToc: false                          # Auto-generate table of contents
+updatedDate: 'Jan 20 2025'            # Last significant update (optional)
+relatedPosts: ['existing-post-slug']    # Manual related post connections
+externalLinks:                          # Useful external resources
+  - title: 'Official Documentation'
+    url: 'https://docs.example.com'
+  - title: 'Related Tutorial'
+    url: 'https://example.com/tutorial'
+---
+
+import { Image } from 'astro:assets';
+
+## Introduction
+
+Start with a compelling hook that captures the reader's attention. Explain what they'll learn and why it matters to them.
+
+**What you'll learn:**
+- Key concept or skill #1
+- Key concept or skill #2
+- Key concept or skill #3
+
+## Prerequisites
+
+*Optional: List any required knowledge or setup*
+
+- Basic understanding of [concept]
+- [Tool/software] installed
+- Familiarity with [technology]
+
+## Main Content Section
+
+### Using Images Effectively
+
+For optimal performance and SEO, use the Astro Image component:
+
+<Image
+  src="/blog/images/example-screenshot.jpg"
+  alt="Descriptive alt text that explains what's in the image"
+  width={800}
+  height={400}
+  format="webp"
+/>
+
+**Image Best Practices:**
+- Use descriptive alt text for accessibility
+- Optimize images to &lt;100KB when possible
+- Use WebP format for better compression
+- Include width/height to prevent layout shift
+
+### Code Examples
+
+When including code, use proper syntax highlighting:
+
+```typescript
+// Example TypeScript code
+interface BlogPost {
+  title: string;
+  description: string;
+  pubDate: Date;
+  category: 'tutorial' | 'opinion' | 'project' | 'philosophy';
+}
+
+const examplePost: BlogPost = {
+  title: 'My Awesome Post',
+  description: 'Learn something amazing',
+  pubDate: new Date('2025-01-18'),
+  category: 'tutorial'
+};
+```
+
+```bash
+# Command line examples
+deno task dev
+deno task build
+deno task preview
+```
+
+### Interactive Components (MDX)
+
+When you need interactive elements, import and use components:
+
+```jsx
+// Example component usage (uncomment to use)
+// import { InteractiveDemo } from '@components/InteractiveDemo.tsx';
+//
+// <InteractiveDemo
+//   client:load
+//   data={exampleData}
+//   title="Try it yourself"
+// />
+```
+
+### Lists and Organization
+
+**Unordered lists for features or benefits:**
+- Clear, concise point
+- Another important point
+- Third key point
+
+**Ordered lists for step-by-step processes:**
+1. First step with clear action
+2. Second step building on the first
+3. Final step with expected outcome
+
+### Callouts and Emphasis
+
+> **💡 Pro Tip**: Use blockquotes for important notes, tips, or warnings that need to stand out from the main content.
+
+**Important concepts** can be emphasized with bold text, while *definitions or foreign terms* use italic text.
+
+## Advanced Topics
+
+### When to Use This Section
+- Complex concepts that build on basics
+- Optional advanced features
+- Performance optimizations
+- Troubleshooting common issues
+
+### Example Advanced Content
+
+```typescript
+// Advanced pattern example
+class AdvancedBlogManager {
+  private posts: BlogPost[] = [];
+
+  constructor(posts: BlogPost[]) {
+    this.posts = posts;
+  }
+
+  getRelatedPosts(currentPost: BlogPost, limit: number = 3): BlogPost[] {
+    return this.posts
+      .filter(post => post.category === currentPost.category)
+      .filter(post => post.title !== currentPost.title)
+      .slice(0, limit);
+  }
+}
+```
+
+## Common Pitfalls & Solutions
+
+### Issue 1: Common Problem
+**Problem**: Description of what goes wrong
+**Solution**: Step-by-step fix
+**Prevention**: How to avoid in the future
+
+### Issue 2: Another Common Problem
+**Problem**: Description of what goes wrong
+**Solution**: Step-by-step fix
+**Prevention**: How to avoid in the future
+
+## Key Takeaways
+
+Summarize the most important points from your post:
+
+- **Main lesson #1**: Brief explanation
+- **Main lesson #2**: Brief explanation
+- **Main lesson #3**: Brief explanation
+
+## What's Next?
+
+Provide clear next steps for readers:
+
+- Try implementing the concepts in your own project
+- Explore the [related documentation](https://example.com)
+- Check out the next post in this series: [Next Post Title](link)
+
+## Resources & Further Reading
+
+**Official Documentation:**
+- [Tool/Framework Docs](https://docs.example.com)
+- [API Reference](https://api.example.com)
+
+**Community Resources:**
+- [Community Forum](https://community.example.com)
+- [GitHub Repository](https://github.com/example/repo)
+
+**Related Posts:**
+- [Related Post 1](link) - Brief description
+- [Related Post 2](link) - Brief description
+
+---
+
+*Found this helpful? [Share your thoughts](mailto:contact@kumak.dev) or connect with me on [GitHub](https://github.com/szymdzum).*

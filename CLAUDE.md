@@ -17,7 +17,7 @@ deno task dev          # Start dev server at localhost:4321
 deno task build        # Build for production
 deno task preview      # Preview production build
 
-# Quality Assurance  
+# Quality Assurance
 deno task check-all    # Astro check + lint + format
 deno task test         # Run tests
 deno task fix          # Auto-fix linting and formatting
@@ -83,11 +83,46 @@ const posts = new PostsManager(allPosts)
 - **Cleanup**: Automated code cleanup via `.claude/hooks/`
 - **Quality Gates**: Enforced via `.claude/settings.json`
 
+## Creating Blog Posts - Quick Reference
+
+**1. Create New Post:**
+```bash
+cp src/content/blog/post-template.mdx src/content/blog/your-post.mdx
+```
+
+**2. Required Frontmatter:**
+```yaml
+title: 'Your Post Title'              # <60 chars for SEO
+description: 'SEO description'        # 120-160 chars
+pubDate: 'Jan 18 2025'               # Publication date
+category: 'tutorial'                  # tutorial|opinion|project|philosophy
+```
+
+**3. Optional Fields:**
+- `heroImage: '/blog/images/hero.jpg'` - Hero image
+- `featured: true` - Homepage featured post
+- `draft: true` - Hidden in production
+- `tags: ['astro', 'web-dev']` - Post tags
+- `showToc: true` - Auto-generate table of contents
+
+**4. Development Workflow:**
+```bash
+deno task dev                         # Preview at localhost:4321/blog/your-post
+# Set draft: false when ready to publish
+git add . && git commit -m "feat: add post about X" && git push
+```
+
+**5. Resources:**
+- **Complete Guide**: `docs/SINGLE_POST_SYSTEM.md`
+- **Template**: `src/content/blog/post-template.mdx`
+- **Schema**: `src/content/config.ts`
+
 ## Documentation
 
 **Available:**
+- `docs/SINGLE_POST_SYSTEM.md` - Complete blog post system guide
 - `CURRENT_CONFIG.md` - Complete infrastructure documentation
-- `WARP.md` - Warp terminal integration guide  
+- `WARP.md` - Warp terminal integration guide
 - `README.md` - Project overview
 
 **Code Style:**
