@@ -1,0 +1,170 @@
+/* Giscus Custom Theme - Terminal Dark */
+
+.giscus, .giscus-frame {
+  color-scheme: dark;
+}
+
+/* Main container */
+main.giscus {
+  background: transparent;
+  color: var(--color-text, #f8f8f2);
+}
+
+/* Reactions section */
+.giscus-reactions {
+  border-color: var(--color-border, #2a2a2a);
+}
+
+.giscus-reaction-count {
+  background: var(--color-bg-muted, #1d1c24);
+  border-color: var(--color-border, #2a2a2a);
+  color: var(--color-text-muted, #8b8b8b);
+}
+
+.giscus-reaction-count:hover {
+  background: var(--color-bg-subtle, #16151d);
+  border-color: var(--color-primary, #00ff41);
+  color: var(--color-text, #f8f8f2);
+}
+
+.giscus-reaction-count.has-reacted {
+  background: var(--color-bg-subtle, #16151d);
+  border-color: var(--color-primary, #00ff41);
+  color: var(--color-primary, #00ff41);
+}
+
+/* Comments section */
+.giscus-comment-header {
+  color: var(--color-text-muted, #8b8b8b);
+}
+
+.giscus-comment-author {
+  color: var(--color-text, #f8f8f2);
+}
+
+.giscus-comment-author:hover {
+  color: var(--color-primary, #00ff41);
+}
+
+.giscus-comment-content {
+  background: transparent;
+  color: var(--color-text, #f8f8f2);
+}
+
+/* Input/Textarea */
+.giscus-comment-box,
+.giscus-comment-box-tabs,
+.giscus-comment-box-preview {
+  background: var(--color-bg-subtle, #16151d);
+  border-color: var(--color-border, #2a2a2a);
+  color: var(--color-text, #f8f8f2);
+}
+
+.giscus-comment-box:focus-within {
+  border-color: var(--color-primary, #00ff41);
+}
+
+.giscus-comment-box-textarea {
+  background: var(--color-bg-subtle, #16151d);
+  color: var(--color-text, #f8f8f2);
+}
+
+.giscus-comment-box-textarea::placeholder {
+  color: var(--color-text-subtle, #5e5e5e);
+}
+
+/* Tabs */
+.giscus-comment-box-tab {
+  color: var(--color-text-muted, #8b8b8b);
+  border-bottom-color: transparent;
+}
+
+.giscus-comment-box-tab.selected,
+.giscus-comment-box-tab:hover {
+  color: var(--color-text, #f8f8f2);
+  border-bottom-color: var(--color-primary, #00ff41);
+}
+
+/* Buttons */
+.giscus-button,
+button.giscus-button {
+  background: var(--color-bg-muted, #1d1c24);
+  border-color: var(--color-border, #2a2a2a);
+  color: var(--color-text, #f8f8f2);
+}
+
+.giscus-button:hover,
+button.giscus-button:hover {
+  background: var(--color-bg-subtle, #16151d);
+  border-color: var(--color-primary, #00ff41);
+  color: var(--color-primary, #00ff41);
+}
+
+.giscus-button-primary,
+button.giscus-button-primary {
+  background: var(--color-primary, #00ff41);
+  border-color: var(--color-primary, #00ff41);
+  color: var(--color-bg, #101113);
+  font-weight: 600;
+}
+
+.giscus-button-primary:hover,
+button.giscus-button-primary:hover {
+  background: var(--color-primary-hover, #00cc33);
+  border-color: var(--color-primary-hover, #00cc33);
+}
+
+/* Sign in button */
+.color-bg-accent-emphasis {
+  background: var(--color-primary, #00ff41) !important;
+  color: var(--color-bg, #101113) !important;
+}
+
+.color-bg-accent-emphasis:hover {
+  background: var(--color-primary-hover, #00cc33) !important;
+}
+
+/* Links */
+.giscus a {
+  color: var(--color-primary, #00ff41);
+}
+
+.giscus a:hover {
+  color: var(--color-primary-hover, #00cc33);
+  text-decoration: underline;
+}
+
+/* Borders */
+.giscus-comment,
+.giscus-reply,
+.giscus-timeline-item {
+  border-color: var(--color-border, #2a2a2a);
+}
+
+/* Code blocks in comments */
+.giscus code {
+  background: var(--color-bg-muted, #1d1c24);
+  color: var(--color-primary, #00ff41);
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.25rem;
+}
+
+.giscus pre {
+  background: var(--color-bg-muted, #1d1c24);
+  border-color: var(--color-border, #2a2a2a);
+}
+
+/* Pagination */
+.giscus-pagination {
+  border-color: var(--color-border, #2a2a2a);
+}
+
+/* Loading state */
+.giscus-loading {
+  color: var(--color-text-muted, #8b8b8b);
+}
+
+/* Ensure all text is visible */
+.giscus * {
+  color: inherit;
+}
