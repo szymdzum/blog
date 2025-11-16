@@ -28,6 +28,15 @@ jobs:
         with:
           deno-version: ${{ matrix.deno-version }}
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
       - name: Cache Deno dependencies
         uses: actions/cache@v4
         with:
@@ -38,11 +47,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-deno-
 
-      - name: Install dependencies
-        run: deno install
-
       - name: TypeScript Validation
-        run: deno run -A npm:astro check
+        run: ./node_modules/.bin/astro check
 
       - name: JSR-Native Linting
         run: deno lint
