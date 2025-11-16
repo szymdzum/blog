@@ -38,7 +38,7 @@ function countCodeWords(content: string): number {
 /**
  * Calculate reading time with different speeds for text and code
  */
-export function calculateReadingTime(content: string): ReadingTimeResult {
+function calculateReadingTime(content: string): ReadingTimeResult {
   const WORDS_PER_MINUTE = 200 // Average reading speed
   const CODE_WORDS_PER_MINUTE = 50 // Slower for code
 
@@ -70,7 +70,7 @@ export function calculateReadingTime(content: string): ReadingTimeResult {
 /**
  * Get reading time emoji based on minutes
  */
-export function getReadingTimeEmoji(minutes: number): string {
+function getReadingTimeEmoji(minutes: number): string {
   if (minutes <= 3) return '☕' // Coffee break
   if (minutes <= 7) return '📖' // Short read
   if (minutes <= 15) return '📚' // Medium read

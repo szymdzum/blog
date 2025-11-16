@@ -33,9 +33,6 @@ export const siteConfig = {
   ],
 } as const
 
-// Infer the type from the object itself
-export type SiteConfig = typeof siteConfig
-
 // Featured projects data
 export interface FeaturedProject {
   title: string
