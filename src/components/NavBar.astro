@@ -9,8 +9,8 @@ const currentPath = Astro.url.pathname;
 
 <header>
   <div class="container">
-    <a href="/" class="logo" aria-label="Kumak.dev home">
-      Kumak.dev
+    <a href="/" class="logo" aria-label="The Null Hypothesis home">
+      [The Null Hypothesis]
     </a>
     <div class="nav-group">
       <nav aria-label="Main navigation">
@@ -36,8 +36,8 @@ const currentPath = Astro.url.pathname;
             aria-label={`${siteConfig.author} on ${social.name}`}
           >
             <svg
-              width="20"
-              height="20"
+              width="28"
+              height="28"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -56,7 +56,6 @@ const currentPath = Astro.url.pathname;
 
 <style>
   header {
-    border-bottom: var(--border-width) solid var(--color-border);
     padding: var(--space-md) 0;
   }
 
@@ -70,10 +69,12 @@ const currentPath = Astro.url.pathname;
   }
 
   .logo {
+    font-family: var(--font-family-display);
     color: var(--color-text);
     text-decoration: none;
     font-weight: var(--font-weight-bold);
     font-size: var(--text-lg);
+    letter-spacing: -0.02em;
     transition: color var(--transition-fast);
   }
 
@@ -117,7 +118,7 @@ const currentPath = Astro.url.pathname;
 
   nav[aria-label="Social media"] {
     display: flex;
-    gap: var(--space-md);
+    gap: var(--space-sm);
   }
 
   nav[aria-label="Social media"] a {
