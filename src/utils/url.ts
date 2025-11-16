@@ -2,11 +2,11 @@
  * Route builder for type-safe URL generation
  */
 export class RouteBuilder {
-  private base: string
-  private segments: string[] = []
+  private base: string;
+  private segments: string[] = [];
 
-  constructor(base = '') {
-    this.base = base ? (base.startsWith('/') ? base : `/${base}`) : ''
+  constructor(base = "") {
+    this.base = base ? (base.startsWith("/") ? base : `/${base}`) : "";
   }
 
   /**
@@ -14,12 +14,12 @@ export class RouteBuilder {
    * @param segment - URL segment to add
    */
   segment(segment: string): RouteBuilder {
-    if (!segment) throw new Error('Segment cannot be empty')
+    if (!segment) throw new Error("Segment cannot be empty");
 
     // Encode the segment to handle special characters safely
-    const encoded = encodeURIComponent(segment.replace(/\//g, ''))
-    this.segments.push(encoded)
-    return this
+    const encoded = encodeURIComponent(segment.replace(/\//g, ""));
+    this.segments.push(encoded);
+    return this;
   }
 
   /**
@@ -27,10 +27,10 @@ export class RouteBuilder {
    * @param trailingSlash - Whether to add trailing slash (default: true)
    */
   build(trailingSlash = true): string {
-    const parts = [this.base, ...this.segments].filter((part) => part.length > 0)
-    const path = parts.join('/')
-    const finalPath = path.startsWith('/') ? path : `/${path}`
-    return trailingSlash ? `${finalPath}/` : finalPath
+    const parts = [this.base, ...this.segments].filter((part) => part.length > 0);
+    const path = parts.join("/");
+    const finalPath = path.startsWith("/") ? path : `/${path}`;
+    return trailingSlash ? `${finalPath}/` : finalPath;
   }
 
   /**
@@ -38,8 +38,8 @@ export class RouteBuilder {
    * @param baseUrl - Base URL for absolute URLs
    */
   toURL(baseUrl?: string): URL {
-    const path = this.build()
-    return baseUrl ? new URL(path, baseUrl) : new URL(path, 'http://localhost')
+    const path = this.build();
+    return baseUrl ? new URL(path, baseUrl) : new URL(path, "http://localhost");
   }
 }
 
@@ -52,7 +52,7 @@ export const BlogRoutes = {
    * @param slug - Post slug
    */
   post(slug: string): string {
-    return new RouteBuilder('blog').segment(slug).build()
+    return new RouteBuilder("blog").segment(slug).build();
   },
 
   /**
@@ -60,7 +60,7 @@ export const BlogRoutes = {
    * @param category - Category name
    */
   category(category: string): string {
-    return new RouteBuilder('blog').segment('category').segment(category).build()
+    return new RouteBuilder("blog").segment("category").segment(category).build();
   },
 
   /**
@@ -68,13 +68,13 @@ export const BlogRoutes = {
    * @param tag - Tag name
    */
   tag(tag: string): string {
-    return new RouteBuilder('blog').segment('tag').segment(tag).build()
+    return new RouteBuilder("blog").segment("tag").segment(tag).build();
   },
 
   /**
    * Blog index URL
    */
   index(): string {
-    return new RouteBuilder('blog').build()
+    return new RouteBuilder("blog").build();
   },
-} as const
+} as const;

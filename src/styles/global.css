@@ -45,8 +45,8 @@ svg {
 }
 
 /* Remove list styles on ul, ol elements with a list role */
-ul[role='list'],
-ol[role='list'] {
+ul[role="list"],
+ol[role="list"] {
   list-style: none;
   padding: 0;
 }
@@ -141,8 +141,9 @@ select {
 
   /* Typography Properties */
   --font-family-base:
-    'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  --font-family-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace;
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -392,11 +393,11 @@ aside > nav {
    =========================== */
 
 /* Table of contents depth styling */
-[data-toc-level='3'] {
+[data-toc-level="3"] {
   margin-inline-start: var(--space-md);
 }
 
-[data-toc-level='4'] {
+[data-toc-level="4"] {
   margin-inline-start: var(--space-lg);
 }
 
@@ -419,14 +420,14 @@ aside > nav {
 }
 
 /* Hidden on mobile */
-[data-hide='mobile'] {
+[data-hide="mobile"] {
   @media (max-width: 60rem) {
     display: none;
   }
 }
 
 /* Hidden on desktop */
-[data-hide='desktop'] {
+[data-hide="desktop"] {
   @media (min-width: 60rem) {
     display: none;
   }
@@ -443,7 +444,7 @@ aside > nav {
   letter-spacing: 0.05em;
 }
 
-[data-badge='draft'] {
+[data-badge="draft"] {
   background: var(--color-accent);
   color: var(--color-bg);
 }
@@ -453,25 +454,25 @@ aside > nav {
    =========================== */
 
 /* Disabled state */
-[aria-disabled='true'] {
+[aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
 }
 
 /* Hidden but accessible */
-[aria-hidden='true'] {
+[aria-hidden="true"] {
   user-select: none;
 }
 
 /* Loading state */
-[aria-busy='true'] {
+[aria-busy="true"] {
   position: relative;
   pointer-events: none;
 }
 
-[aria-busy='true']::after {
-  content: '';
+[aria-busy="true"]::after {
+  content: "";
   position: absolute;
   inset: 0;
   background: rgb(var(--color-bg-rgb) / 0.7);
