@@ -31,32 +31,3 @@ export const siteConfig = {
     { title: "About", href: "/about" },
   ],
 } as const;
-
-// Featured projects data
-export interface FeaturedProject {
-  title: string;
-  description: string;
-  tags: string[];
-  githubUrl: string;
-  demoUrl?: string;
-  featured: boolean;
-}
-
-export const featuredProjects: FeaturedProject[] = [
-  {
-    title: "Result Monad",
-    description: "TypeScript implementation of the Result monad pattern",
-    tags: ["TypeScript", "Monad", "Error Handling"],
-    githubUrl: "https://github.com/szymdzum/ts-result-monad",
-    featured: true,
-  },
-  {
-    title: "Blog",
-    description:
-      "Personal blog built with Astro and Deno, featuring markdown content and modern web technologies",
-    tags: ["Astro", "TypeScript", "Deno"],
-    githubUrl: "https://github.com/szymdzum/blog",
-    demoUrl: "https://kumak.dev",
-    featured: true,
-  },
-];
