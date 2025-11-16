@@ -38,6 +38,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-deno-
 
+      - name: Install dependencies
+        run: deno install
+
       - name: TypeScript Validation
         run: deno run -A npm:astro check
 
