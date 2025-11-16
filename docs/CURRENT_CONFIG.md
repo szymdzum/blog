@@ -1,7 +1,7 @@
 # Current Blog Configuration
 
-**Documentation Date**: September 17, 2025  
-**Status**: ✅ Deno Deploy Early Access - Fully Migrated & Optimized  
+**Documentation Date**: November 16, 2025  
+**Status**: ✅ Deno Deploy Early Access - Production Ready  
 **Site**: https://kumak.dev  
 
 ## 🎯 System Overview
@@ -20,9 +20,9 @@ GitHub Repository → GitHub Actions → Deno Deploy EA → Cloudflare CDN → G
 - **Platform**: console.deno.com (EA)
 - **Project**: `devblog`
 - **Organization**: `szymdzum`
-- **Build System**: Integrated (automatic)
+- **Build System**: deployctl via GitHub Actions
 - **Regions**: 6 worldwide regions
-- **Performance**: 9ms avg latency, 0.00% error rate
+- **Performance**: <9ms avg latency, 0.00% error rate
 
 ### Domain Configuration
 - **Primary**: kumak.dev
@@ -36,183 +36,206 @@ GitHub Repository → GitHub Actions → Deno Deploy EA → Cloudflare CDN → G
 ```
 blog/
 ├── src/                        # Source code
-│   ├── components/            # Astro components
+│   ├── components/            # 6 Astro components (316 LOC)
 │   ├── content/               # Blog posts & content collections
-│   ├── layouts/               # Page templates
-│   ├── pages/                 # Routes & API endpoints
-│   ├── styles/                # CSS styles
-│   └── utils/                 # TypeScript utilities
-├── public/                     # Static assets
-├── tests/                      # Test suite
-├── .github/workflows/          # CI/CD automation
+│   │   ├── config.ts          # Zod content schemas
+│   │   └── blog/              # 2 blog posts (MDX + Markdown)
+│   ├── layouts/               # 1 layout (BaseLayout.astro)
+│   ├── pages/                 # 4 pages (index, about, [...slug], rss.xml)
+│   ├── styles/                # global.css (248 LOC - tokens only)
+│   ├── utils/                 # 1 utility (path.ts)
+│   └── site-config.ts         # Site metadata
+├── .github/workflows/          # CI/CD automation (ci.yml)
 ├── dist/                       # Build output (generated)
 ├── node_modules/               # Dependencies (generated)
 ├── astro.config.mjs           # Astro configuration
 ├── deno.json                  # Deno project configuration
-├── package.json               # NPM dependencies
+├── package.json               # npm dependencies
 ├── tsconfig.json              # TypeScript configuration
-├── .env.example               # Environment template
-└── README.md                  # Project documentation
+└── knip.config.ts             # Unused code detection
 ```
+
+### Components (src/components/)
+
+**6 Components, 316 LOC total:**
+- **BlogPostCard.astro** - Blog post preview cards
+- **Footer.astro** - Site footer with social links
+- **FormattedDate.astro** - Date formatting utility
+- **Head.astro** - HTML head with meta tags
+- **Hero.astro** - Homepage hero section
+- **NavBar.astro** - Navigation bar
+
+### Pages (src/pages/)
+
+**4 Pages, 156 LOC total:**
+- **index.astro** - Homepage with hero and post list
+- **about.astro** - About page
+- **[...slug].astro** - Dynamic blog post pages
+- **rss.xml.js** - RSS feed generation
+
+### Utilities (src/utils/)
+
+**1 Utility:**
+- **path.ts** - Active link detection for navigation
+  - Function: `isPathActive(currentPath, targetPath): boolean`
 
 ## ⚙️ Configuration Files
 
-### Astro Configuration (`astro.config.mjs`)
+### Astro Configuration (astro.config.mjs)
+
 ```javascript
 export default defineConfig({
   site: 'https://kumak.dev',
-  output: 'static',              // Static site generation
+  output: 'static',
   integrations: [mdx(), sitemap()],
-  image: {
-    service: {
-      entrypoint: 'astro/assets/services/noop',
-    },
+  compressHTML: true,
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'viewport'
   },
   build: {
-    inlineStylesheets: 'auto',
+    inlineStylesheets: 'never'
   },
-  compressHTML: true,
   vite: {
     build: {
-      cssMinify: true,
-      minify: 'terser',
-    },
-  },
+      cssMinify: true
+    }
+  }
 })
 ```
 
-### Deno Configuration (`deno.json`)
+**Key Features:**
+- Static site generation (SSG)
+- MDX support for interactive content
+- Automatic sitemap generation
+- HTML compression enabled
+- Viewport-based prefetching
+- CSS minification
+
+### Deno Configuration (deno.json)
+
+**JSR Imports:**
 ```json
 {
-  "imports": {
-    "zod": "jsr:@zod/zod@^4.1.8",
-    "@std/fs": "jsr:@std/fs@^1.0.19",
-    "@std/path": "jsr:@std/path@^1.1.2",
-    "@std/assert": "jsr:@std/assert@^1.0.14",
-    "@components/*": "./src/components/*",
-    "@layouts/*": "./src/layouts/*",
-    "@utils/*": "./src/utils/*",
-    "@styles/*": "./src/styles/*",
-    "@config/*": "./src/config/*",
-    "@/*": "./src/*",
-    "@site-config": "./src/site-config.ts",
-    "@postSorter": "./src/utils/postSorter.ts"
-  },
-  "tasks": {
-    "dev": "deno run -A npm:astro dev",
-    "build": "deno run -A npm:astro build",
-    "preview": "deno task preview-urls && deno task preview-serve",
-    "preview-serve": "deno run --allow-net --allow-read jsr:@std/http/file-server dist --port 4321",
-    "preview-urls": "echo '🚀 Preview server starting...' && echo '📍 Local: http://localhost:4321' && echo '📍 Network: http://'$(ipconfig getifaddr en0 2>/dev/null || echo 'localhost')':4321' && echo ''",
-    "lint": "deno lint",
-    "format": "deno fmt",
-    "check": "deno lint && deno fmt",
-    "check-all": "deno run -A npm:astro check && deno lint && deno fmt",
-    "check-format": "deno fmt --check src/ tests/ astro.config.mjs",
-    "test": "deno test --allow-read --allow-env",
-    "test:watch": "deno test --allow-read --allow-env --watch",
-    "test:coverage": "deno test --allow-read --allow-env --coverage=coverage && deno coverage coverage",
-    "fix": "deno lint --fix && deno fmt src/ tests/ astro.config.mjs",
-    "fix-all": "deno lint --fix && deno fmt"
-  },
-  "lint": {
-    "rules": {
-      "tags": ["recommended"],
-      "include": [
-        "no-any", "no-explicit-any", "no-unused-vars", "prefer-const",
-        "no-inferrable-types", "ban-untagged-todo", "camelcase"
-      ]
-    },
-    "exclude": ["dist/", "node_modules/", ".astro/", "coverage/"]
-  },
-  "fmt": {
-    "useTabs": false,
-    "lineWidth": 120,
-    "indentWidth": 2,
-    "singleQuote": true,
-    "proseWrap": "preserve",
-    "semiColons": false,
-    "exclude": ["dist/", "node_modules/", ".astro/", "coverage/", "*.md"]
-  },
-  "compilerOptions": {
-    "strict": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "astro"
-  }
+  "zod": "jsr:@zod/zod@^4.1.8",
+  "@std/fs": "jsr:@std/fs@^1.0.19",
+  "@std/path": "jsr:@std/path@^1.1.2",
+  "@std/assert": "jsr:@std/assert@^1.0.14"
 }
 ```
 
-### Package Configuration (`package.json`)
+**Path Aliases:**
 ```json
 {
-  "name": "@szymdzum/blog",
-  "type": "module",
-  "version": "0.0.1",
-  "scripts": {
-    "dev": "deno task dev",
-    "start": "deno task dev",
-    "build": "deno task build",
-    "preview": "deno task preview"
-  },
-  "dependencies": {
-    "@astrojs/mdx": "^4.0.1",
-    "@astrojs/sitemap": "^3.2.1",
-    "astro": "^5.13.7"
-  },
-  "devDependencies": {
-    "@types/node": "^22.8.6",
-    "typescript": "^5.9.2"
-  }
+  "@components/*": "./src/components/*",
+  "@layouts/*": "./src/layouts/*",
+  "@utils/*": "./src/utils/*",
+  "@styles/*": "./src/styles/*",
+  "@config/*": "./src/config/*",
+  "@/*": "./src/*",
+  "@site-config": "./src/site-config.ts"
 }
 ```
 
-### Environment Configuration (`.env.example`)
+**Tasks:**
+```json
+{
+  "dev": "./node_modules/.bin/astro dev",
+  "build": "./node_modules/.bin/astro build",
+  "preview": "deno task preview-urls && deno task preview-serve",
+  "preview-serve": "deno run --allow-net --allow-read jsr:@std/http/file-server dist --port 4321",
+  "lint": "deno lint",
+  "format": "deno fmt",
+  "check": "deno lint && deno fmt --check",
+  "check-all": "deno lint && deno fmt --check",
+  "knip": "npx knip",
+  "fix": "deno lint --fix && deno fmt"
+}
+```
+
+**Lint Configuration (79 rules):**
+- Base: `recommended` tags
+- Strict rules: `ban-untagged-todo`, `eqeqeq`, `no-await-in-loop`, `no-eval`, `no-explicit-any`, `prefer-const`
+- Exclusions: `no-inferrable-types`, `triple-slash-reference`
+
+**Format Configuration:**
+- Line width: 100 characters
+- Indentation: 2 spaces (no tabs)
+- Quotes: Double (`"`)
+- Semicolons: Required
+- Prose wrap: Preserve
+
+**Compiler Options:**
+- Strict mode: All strict flags enabled
+- `noImplicitAny`: true
+- `exactOptionalPropertyTypes`: true
+- `noUncheckedIndexedAccess`: true
+- JSX: react-jsx with Astro import source
+
+### Package Configuration (package.json)
+
+**Dependencies (7 packages):**
+```json
+{
+  "@astrojs/mdx": "^4.3.4",
+  "@astrojs/rss": "^4.0.12",
+  "@astrojs/sitemap": "^3.5.1",
+  "@deno/astro-adapter": "^0.3.1",
+  "astro": "^5.13.7",
+  "astro-icon": "^1.1.5",
+  "typescript": "^5.9.2"
+}
+```
+
+**Dev Dependencies (1 package):**
+```json
+{
+  "knip": "^5.69.1"
+}
+```
+
+### Environment Configuration (.env.example)
+
 ```bash
-# Site Configuration
 SITE_URL=https://kumak.dev
-
-# Optional: GitHub Token for automated PRs  
 GITHUB_TOKEN=ghp_your_token_here
-
-# NOTE: Deno Deploy EA uses GitHub integration - no manual tokens needed
 ```
+
+**Note:** Deno Deploy EA uses GitHub integration - manual tokens not required for deployment.
 
 ## 🔄 CI/CD Pipeline
 
-### GitHub Actions Workflow (`.github/workflows/ci-cd.yml`)
+### GitHub Actions Workflow (.github/workflows/ci.yml)
 
 **Triggers:**
 - Push to `main` branch
 - Pull requests to `main` branch
 
-**Quality Gates Job:**
-```yaml
-quality-gates:
-  runs-on: ubuntu-latest
-  strategy:
-    matrix:
-      deno-version: [v2.x]
-  steps:
-    - Checkout repository
-    - Setup Deno v2.x
-    - Cache Deno dependencies  
-    - TypeScript validation
-    - JSR-native linting
-    - Code formatting check
-    - Test suite execution
-    - Production build validation
-    - Upload build artifacts (30-day retention)
-```
+**Permissions:**
+- `contents: read`
+- `id-token: write` (for Deno Deploy OIDC)
 
-**Deployment:**
-- **Automatic**: EA deploys when quality gates pass on `main` branch
-- **Manual**: No deployctl needed - fully integrated
-- **Monitoring**: Available at console.deno.com
+**Steps:**
+1. Checkout repository (`actions/checkout@v4`)
+2. Setup Deno v2.x (`denoland/setup-deno@v1`)
+3. Setup Node.js 20 (`actions/setup-node@v4`)
+4. Install dependencies (`npm ci`)
+5. Lint code (`deno lint`)
+6. Format check (`deno fmt --check`)
+7. Build production (`deno task build`)
+8. Deploy to Deno Deploy (main branch only)
 
-### Build Performance
-- **Quality Gates**: ~27 seconds
-- **Total Build**: ~1 minute  
-- **Deployment**: Automatic (integrated)
+**Deployment Configuration:**
+- Action: `denoland/deployctl@v1`
+- Project: `devblog`
+- Entrypoint: `https://deno.land/std/http/file_server.ts`
+- Root: `dist/`
+- Method: OIDC authentication
+
+**Build Performance:**
+- Lint + Format: <10 seconds
+- Build: ~30 seconds
+- Deployment: ~30 seconds
 - **Total Pipeline**: <2 minutes
 
 ## 🌐 DNS & Domain Configuration
@@ -221,215 +244,182 @@ quality-gates:
 ```
 kumak.dev       → CNAME → alias.deno.net (proxied ✅)
 www.kumak.dev   → CNAME → kumak.dev (proxied ✅)
-_acme-challenge.kumak.dev → CNAME → 7c1f15d49930c21cd25b691a9dba0d56._acme.deno.net
-_acme-challenge.www.kumak.dev → CNAME → a6f9d42f26b4b38081ff213d6f5276a7._acme.deno.net
+_acme-challenge → CNAME → *.acme.deno.net (SSL verification)
 ```
 
 ### SSL/TLS Configuration
 - **Mode**: Full (Strict)
-- **Always Use HTTPS**: Disabled (to prevent redirect conflicts)
-- **Certificates**: Let's Encrypt via EA
-- **HSTS**: Available via Cloudflare
+- **Certificates**: Let's Encrypt via Deno Deploy
 - **Auto-Renewal**: 60-day cycle
-
-### Email Configuration (Google Workspace)
-```
-MX Records:
-- aspmx.l.google.com (priority 1)
-- alt1.aspmx.l.google.com (priority 5) 
-- alt2.aspmx.l.google.com (priority 5)
-- alt3.aspmx.l.google.com (priority 10)
-- alt4.aspmx.l.google.com (priority 10)
-
-TXT Records:
-- SPF: "v=spf1 include:_spf.google.com ~all"
-- DKIM: google._domainkey.kumak.dev
-```
-
-## 🧪 Testing & Quality Assurance
-
-### Test Suite
-```javascript
-// tests/routing.test.ts
-- blog routing - URL generation works correctly ✅
-- blog routing - PostsManager utility types work ✅
-
-// tests/navigation.test.ts  
-- Navigation component tests (semantic HTML, ARIA, accessibility) ✅
-```
-
-### Quality Gates (79 Lint Rules)
-- **TypeScript**: Strict mode, no errors
-- **Linting**: no-any, no-explicit-any, no-unused-vars, prefer-const
-- **Formatting**: 120 char width, 2-space indent, single quotes
-- **Testing**: Deno test with file system and env permissions
-
-### Pre-commit Hooks
-```bash
-🔍 Running pre-commit checks...
-📐 Checking code formatting...
-🔍 Running linter...  
-🧪 Running tests...
-✅ All pre-commit checks passed!
-```
+- **TLS Version**: 1.3
+- **HSTS**: Available via Cloudflare
 
 ## 📊 Performance Configuration
 
 ### Build Optimization
-- **HTML**: Compressed/minified
-- **CSS**: Minified, inlined for small files
-- **JavaScript**: Terser minification
-- **Assets**: Optimized file naming with hashes
-- **Images**: Responsive, lazy loading, fetchpriority hints
+- **HTML**: Compressed and minified
+- **CSS**: Minified, manual inlining via Head.astro
+- **JavaScript**: Minimized bundle size
+- **Assets**: Cache-optimized file naming with hashes
+- **Prefetching**: Viewport-based for instant navigation
 
 ### Caching Strategy
 - **Cloudflare**: Edge caching globally
-- **GitHub Actions**: Deno dependencies cached
-- **Build**: Incremental builds when possible
-- **Static Assets**: Long-term browser caching
+- **Browser**: Long-term caching for static assets
+- **Build**: Incremental when possible
 
 ### Performance Metrics
-- **Build Time**: ~1 minute (50% improvement over legacy)
-- **Page Load**: Optimized for Core Web Vitals
-- **Response Time**: 9ms average from EA
+- **Response Time**: <9ms average (Deno Deploy EA)
 - **Error Rate**: 0.00%
-- **Availability**: Multi-region redundancy
+- **Availability**: Multi-region redundancy (6 regions)
+- **Build Time**: ~30 seconds
 
 ## 🔐 Security Configuration
 
 ### Access Control
 - **GitHub**: Repository access via SSH keys
-- **Deno Deploy**: GitHub app integration (no manual tokens)
-- **Cloudflare**: API token with scoped permissions
+- **Deno Deploy**: OIDC token authentication (no manual tokens)
+- **Cloudflare**: Scoped API tokens
 
 ### Content Security
-- **HTTPS**: Enforced via Cloudflare and EA
+- **HTTPS**: Enforced
 - **SSL**: TLS 1.3, modern cipher suites
 - **Headers**: Security headers via Cloudflare
-- **Dependencies**: Regular updates via Dependabot
+- **Dependencies**: Regular npm audit
 
 ### Secrets Management
-- **Environment Variables**: GitHub Secrets for CI/CD
-- **No Plain Text**: All sensitive data in secure stores
-- **Token Rotation**: Periodic review and renewal
+- **GitHub Secrets**: Used for CI/CD
+- **Environment Variables**: Managed in Deno Deploy console
+- **No Plain Text**: All sensitive data secured
 
 ## 💰 Cost Structure
 
 ### Current Usage (All Free Tiers)
-- **GitHub Actions**: ~100 minutes/month (of 2,000 available)
-- **Deno Deploy EA**: Well within free tier limits
-- **Cloudflare**: Free plan (sufficient for current traffic)
+- **GitHub Actions**: <100 minutes/month (of 2,000 available)
+- **Deno Deploy EA**: Free tier
+- **Cloudflare**: Free plan
 - **Total Monthly Cost**: $0
 
 ### Scaling Projections
-- **10x Traffic**: Still within free tiers
+- **10x Traffic**: Within free tiers
 - **100x Traffic**: ~$20/month (Deno Deploy Pro)
-- **Enterprise**: Custom pricing as needed
 
-## 🔮 Available Features
+## 🔮 Active Features
 
-### Current Active Features
-- ✅ Static site generation (Astro)
-- ✅ MDX content with components
+### Currently Implemented
+- ✅ Static site generation (Astro 5.13.7)
+- ✅ MDX content with inline components
 - ✅ Automated sitemap generation
-- ✅ RSS feed generation  
-- ✅ Multi-region deployment
+- ✅ RSS feed at /rss.xml
+- ✅ Multi-region deployment (6 regions)
 - ✅ Auto SSL certificate renewal
-- ✅ GitHub integration CI/CD
+- ✅ GitHub Actions CI/CD
+- ✅ Viewport-based prefetching
+- ✅ HTML compression
 
-### EA Features Available (Not Yet Used)
-- 🔄 **Cron Jobs**: Scheduled tasks, content updates
-- 🔄 **Edge Functions**: Dynamic content at edge
-- 🔄 **KV Storage**: Key-value data storage
-- 🔄 **Queues**: Background job processing
-- 🔄 **OpenTelemetry**: Advanced monitoring/tracing
+### Available But Not Used
+- 🔄 Cron Jobs (scheduled tasks)
+- 🔄 Edge Functions (dynamic content)
+- 🔄 KV Storage (key-value data)
+- 🔄 Queues (background jobs)
+- 🔄 OpenTelemetry (advanced monitoring)
 
 ## 📈 Monitoring & Analytics
 
 ### Available Dashboards
-- **EA Console**: https://console.deno.com (build logs, metrics, traces)
-- **GitHub Actions**: Repository Actions tab (CI/CD status)
-- **Cloudflare**: DNS, CDN, and security analytics
+- **Deno Deploy Console**: https://console.deno.com (metrics, logs, traces)
+- **GitHub Actions**: CI/CD status and history
+- **Cloudflare**: DNS, CDN, security analytics
 
-### Key Metrics Tracked
+### Key Metrics
 - **Build Success Rate**: 100%
-- **Deployment Time**: <2 minutes total
-- **Site Availability**: Multi-region monitoring
-- **Performance**: Response times, error rates
-- **Security**: SSL certificate status, security headers
+- **Deployment Time**: <2 minutes
+- **Site Availability**: 100% (multi-region)
+- **Response Time**: <9ms average
+- **Error Rate**: 0.00%
 
 ## 🛠️ Development Workflow
 
 ### Local Development
 ```bash
-# Start development server
-deno task dev                 # http://localhost:4321
+# Start dev server (http://localhost:4321)
+deno task dev
 
 # Run quality checks
-deno task check-all           # TypeScript + lint + format
+deno task check-all           # Lint + format check
 
-# Run tests
-deno task test               # Full test suite
-deno task test:watch         # Watch mode
+# Auto-fix issues
+deno task fix                 # Lint --fix + format
 
 # Preview production build
 deno task build && deno task preview
+
+# Analyze unused code
+deno task knip
 ```
 
 ### Deployment Process
 ```bash
-# Automatic deployment on main branch:
+# Automatic deployment:
 git push origin main
-# → GitHub Actions quality gates 
-# → EA automatic deployment
+# → Lint + format + build checks
+# → Deploy to Deno Deploy EA
 # → Live at https://kumak.dev
 ```
 
 ### Content Management
 ```bash
 # Add new blog post
-src/content/blog/new-post.md
+src/content/blog/new-post.mdx
 
-# Update navigation
-src/components/Navigation.astro
+# Update navigation (if needed)
+src/site-config.ts
 
-# Modify layouts  
-src/layouts/*.astro
+# Modify layout
+src/layouts/BaseLayout.astro
 ```
 
-## 📝 Maintenance Tasks
+## 📝 Content Schema (Zod)
 
-### Regular (Weekly)
-- Monitor EA dashboard metrics
-- Review GitHub Actions runs
-- Check Cloudflare analytics
-
-### Periodic (Monthly)  
-- Update dependencies (`deno task check-all`)
-- Review and rotate access tokens
-- Audit build performance
-
-### Annual
-- Review SSL certificate renewal
-- Evaluate performance optimizations
-- Consider new EA features adoption
+**Blog Post Frontmatter:**
+```typescript
+{
+  title: string,              // Required
+  description: string,        // Required
+  pubDate: Date,              // Required
+  updatedDate?: Date,
+  heroImage?: string,
+  draft: boolean,             // Default: false
+  category: "tutorial" | "opinion" | "project" | "philosophy",
+  tags: string[],             // Default: []
+  keywords?: string[],
+  author: string,             // Default: "Szymon Dzumak"
+  showToc: boolean,           // Default: false
+  featured: boolean,          // Default: false
+  minutesToRead?: number,
+  relatedPosts?: string[],
+  externalLinks?: Array<{title: string, url: string}>
+}
+```
 
 ## 📚 Documentation Resources
 
 ### Project Documentation
 - `README.md` - Project overview and setup
-- `WARP.md` - Warp terminal integration guide  
-- `DEPLOY_EA_MIGRATION.md` - Migration process documentation
-- `OPTIMIZATION_REPORT.md` - Performance analysis
-- `CURRENT_CONFIG.md` - This configuration documentation
+- `CLAUDE.md` - AI assistant guidelines
+- `WARP.md` - Warp terminal integration
+- `docs/CURRENT_CONFIG.md` - This file
+- `docs/DENO_CONFIG.md` - Deno configuration details
+- `docs/DEPLOYMENT_GUIDE.md` - Deployment procedures
+- `docs/CODE_GUIDE.md` - Code patterns and best practices
 
 ### External Resources
-- [Deno Deploy EA Documentation](https://docs.deno.com/deploy/early-access/)
+- [Deno Deploy Documentation](https://docs.deno.com/deploy/)
 - [Astro Documentation](https://docs.astro.build/)
 - [Cloudflare Documentation](https://developers.cloudflare.com/)
 
 ---
 
-**Last Updated**: September 17, 2025  
-**Configuration Status**: ✅ Complete and Optimized  
-**Next Review**: October 2025 (or after major changes)
+**Last Updated**: November 16, 2025  
+**Configuration Status**: ✅ Production Ready  
+**Next Review**: December 2025 (or after major changes)

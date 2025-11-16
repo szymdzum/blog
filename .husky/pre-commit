@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+
+# Pre-commit quality gates (< 2 seconds)
+# Full build and type checking deferred to CI
+
+echo "🔍 Running pre-commit checks..."
+
+# Format check (~ 70ms)
+echo "  → Checking formatting..."
+deno fmt --check || {
+  echo "❌ Formatting check failed. Run 'deno task fix' to auto-fix."
+  exit 1
+}
+
+# Lint (~ 23ms)
+echo "  → Running linter..."
+deno lint || {
+  echo "❌ Linting failed. Run 'deno task fix' to auto-fix common issues."
+  exit 1
+}
+
+echo "✅ Pre-commit checks passed!"
+echo "💡 Build and full type checking will run in CI."

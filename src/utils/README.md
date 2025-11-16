@@ -1,166 +1,156 @@
-# Blog Post Management Utilities
+# Blog Utilities
 
-This directory contains utilities for managing, filtering, and sorting blog posts in the Astro project.
+This directory contains utility functions for the Astro blog project.
 
-## PostsManager
+## Available Utilities
 
-The `PostsManager` class provides a fluent API for working with blog posts. It uses a chainable method pattern for filtering, sorting, and limiting posts.
+### path.ts
 
-### Basic Usage
+Active link detection utility for navigation components.
+
+**Function**: `isPathActive(currentPath: string, targetPath: string): boolean`
+
+**Purpose**: Determines if a navigation link should be marked as active based on the current page path.
+
+**Logic**:
+
+- Returns `true` if `currentPath` exactly matches `targetPath`
+- Handles root path (`/`) specially - only active on homepage
+- Normalizes trailing slashes for consistent comparison
+- Supports nested route matching (e.g., `/blog/post` matches `/blog`)
+
+**Usage Example**:
+
+```astro
+---
+import { isPathActive } from "@utils/path";
+
+const currentPath = Astro.url.pathname;
+const navItems = [
+  { title: "Home", href: "/" },
+  { title: "About", href: "/about" },
+];
+---
+
+<nav>
+  {navItems.map(({ title, href }) => (
+    <a 
+      href={href}
+      aria-current={isPathActive(currentPath, href) ? "page" : undefined}
+    >
+      {title}
+    </a>
+  ))}
+</nav>
+```
+
+**Implementation Details**:
+
+```typescript
+export function isPathActive(currentPath: string, targetPath: string): boolean {
+  // Root path only active on homepage
+  if (targetPath === "/") {
+    return currentPath === "/";
+  }
+
+  // Normalize trailing slashes
+  const normalizedCurrent = currentPath.replace(/\/$/, "");
+  const normalizedTarget = targetPath.replace(/\/$/, "");
+
+  // Check exact match or nested route
+  return normalizedCurrent === normalizedTarget ||
+    normalizedCurrent.startsWith(normalizedTarget + "/");
+}
+```
+
+## Content Queries
+
+For blog post queries, use Astro's built-in `getCollection()` function with standard JavaScript array methods:
 
 ```typescript
 import { getCollection } from "astro:content";
-import { PostQueries, PostsManager } from "../utils/postSorter";
 
-// Get all blog posts
-const allPosts = await getCollection("blog");
+// Get all published posts
+const posts = await getCollection("blog", ({ data }) => !data.draft);
 
-// Get the 3 most recent posts
-const latestPosts = PostsManager.getLatest(allPosts, 3);
+// Sort by date (newest first)
+const sortedPosts = posts.sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
 
-// Get featured posts sorted alphabetically
-const featuredPosts = new PostsManager(allPosts)
-  .filter(PostQueries.FILTER.FEATURED)
-  .sort(PostQueries.SORT.ALPHABETICAL)
-  .get();
-
-// Get posts with specific tags
-const taggedPosts = new PostsManager(allPosts)
-  .filterByTags(["typescript", "javascript"])
-  .sort(PostQueries.SORT.NEWEST_FIRST)
-  .limit(5)
-  .get();
-```
-
-### Preset Methods
-
-The class includes several convenient static methods for common queries:
-
-```typescript
-// Get latest posts
-const latest = PostsManager.getLatest(allPosts);
+// Filter by tag
+const taggedPosts = posts.filter(({ data }) => data.tags.includes("typescript"));
 
 // Get featured posts
-const featured = PostsManager.getFeatured(allPosts);
+const featuredPosts = posts
+  .filter(({ data }) => data.featured)
+  .slice(0, 3);
 
-// Get posts with a specific tag
-const jsPosts = PostsManager.getByTag(allPosts, "javascript");
-
-// Get recently updated posts
-const updated = PostsManager.getRecentlyUpdated(allPosts);
+// Get posts by category
+const tutorials = posts.filter(({ data }) => data.category === "tutorial");
 ```
 
-### Using with Components
+## Content Schema
 
-In your Astro components, you can use the utility like this:
+Content validation is handled by Zod schemas in `src/content/config.ts`:
 
-```astro
+```typescript
+const blog = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    heroImage: z.string().optional(),
+    draft: z.boolean().default(false),
+    category: z.enum(["tutorial", "opinion", "project", "philosophy"]),
+    tags: z.array(z.string()).default([]),
+    author: z.string().default("Szymon Dzumak"),
+    featured: z.boolean().default(false),
+  }),
+});
+```
+
+## Adding New Utilities
+
+When adding new utilities:
+
+1. Create a new `.ts` file in `src/utils/`
+2. Export functions with explicit TypeScript types
+3. Use `readonly` for immutable parameters
+4. Follow strict TypeScript rules (no `any` types)
+5. Add JSDoc comments for complex logic
+6. Update this README with usage examples
+
+**Example template**:
+
+```typescript
+/**
+ * Utility function description
+ *
+ * @param input - Description of input parameter
+ * @returns Description of return value
+ */
+export function utilityName(input: string): boolean {
+  // Implementation
+  return true;
+}
+```
+
+## Path Aliases
+
+Utilities can be imported using the `@utils` path alias:
+
+```typescript
+import { isPathActive } from "@utils/path";
+```
+
+Configured in:
+
+- `deno.json`: `"@utils/*": "./src/utils/*"`
+- `tsconfig.json`: Same mapping for editor support
+
 ---
-import { getCollection } from 'astro:content';
-import { PostsManager, PostQueries } from '../utils/postSorter';
 
-// Get posts
-const allPosts = await getCollection('blog');
-const recentPosts = PostsManager.getLatest(allPosts, 3);
----
-
-<section>
-  <h2>Recent Posts</h2>
-  {recentPosts.map(post => (
-    <article>
-      <h3>{post.data.title}</h3>
-      <p>{post.data.description}</p>
-    </article>
-  ))}
-</section>
-```
-
-Or with the `Featured` component which accepts various props:
-
-```astro
-<!-- Show 3 latest posts -->
-<Featured preset="latest" />
-
-<!-- Show 5 featured posts -->
-<Featured preset="featured" limit={5} />
-
-<!-- Show posts with specific tags in alphabetical order -->
-<Featured
-  sortBy={PostQueries.SORT.ALPHABETICAL}
-  tags={["javascript", "typescript"]}
-  limit={10}
-/>
-```
-
-## PostQueries Constants
-
-The `PostQueries` object contains constants for common filtering and sorting operations:
-
-### Sort Options
-
-```typescript
-// Sort by publish date (newest first)
-PostQueries.SORT.NEWEST_FIRST;
-
-// Sort by publish date (oldest first)
-PostQueries.SORT.OLDEST_FIRST;
-
-// Sort alphabetically by title (A-Z)
-PostQueries.SORT.ALPHABETICAL;
-
-// Sort alphabetically by title (Z-A)
-PostQueries.SORT.REVERSE_ALPHA;
-
-// Sort by update date
-PostQueries.SORT.RECENTLY_UPDATED;
-```
-
-### Filter Options
-
-```typescript
-// No filtering (all posts)
-PostQueries.FILTER.ALL;
-
-// Only posts marked as featured
-PostQueries.FILTER.FEATURED;
-
-// Only posts with hero images
-PostQueries.FILTER.HAS_IMAGE;
-
-// Only posts published in the current year
-PostQueries.FILTER.PUBLISHED_THIS_YEAR;
-```
-
-### Limit Constants
-
-```typescript
-PostQueries.LIMIT.THREE; // 3 posts
-PostQueries.LIMIT.FIVE; // 5 posts
-PostQueries.LIMIT.TEN; // 10 posts
-```
-
-## API Reference
-
-### PostsManager Class
-
-- `constructor(posts: CollectionEntry<'blog'>[])` - Create a new manager instance
-- `filter(filterOption: PostFilterOption): this` - Filter posts
-- `filterByTags(tags: string[]): this` - Filter by tags
-- `sort(sortBy: SortOption): this` - Sort posts
-- `limit(count: number): this` - Limit number of posts
-- `get(): CollectionEntry<'blog'>[]` - Get the resulting posts array
-- `query(options: PostQueryOptions): CollectionEntry<'blog'>[]` - Apply multiple operations
-
-### Static Methods
-
-- `query(posts, options)` - Apply multiple operations in one call
-- `getLatest(posts, count)` - Get latest posts
-- `getFeatured(posts, count)` - Get featured posts
-- `getByTag(posts, tag, count)` - Get posts with a specific tag
-- `getRecentlyUpdated(posts, count)` - Get recently updated posts
-
-## Types
-
-- `SortOption` - Valid sorting methods
-- `PostFilterOption` - Valid filtering methods
-- `PostQueryOptions` - Options for the query method
+**Last Updated**: November 16, 2025
