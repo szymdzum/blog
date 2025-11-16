@@ -23,15 +23,11 @@
     "check": "deno lint && deno fmt --check",
     "check-all": "./node_modules/.bin/astro check && deno lint && deno fmt --check",
     "knip": "npx knip",
-    "test": "deno test --allow-read --allow-env",
-    "test:watch": "deno test --allow-read --allow-env --watch",
-    "test:coverage": "deno test --allow-read --allow-env --coverage=coverage && deno coverage coverage",
     "fix": "deno lint --fix && deno fmt"
   },
   "lint": {
     "include": [
-      "src/",
-      "tests/"
+      "src/"
     ],
     "exclude": [
       "dist/",
@@ -72,7 +68,6 @@
     "semiColons": true,
     "include": [
       "src/",
-      "tests/",
       "astro.config.mjs"
     ],
     "exclude": [
@@ -81,16 +76,6 @@
       ".astro/",
       "coverage/",
       "docs/"
-    ]
-  },
-  "test": {
-    "include": [
-      "tests/**/*.test.ts"
-    ],
-    "exclude": [
-      "dist/",
-      "node_modules/",
-      ".astro/"
     ]
   },
   "compilerOptions": {
