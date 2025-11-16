@@ -1,7 +1,7 @@
-import { defineCollection, z } from 'astro:content'
+import { defineCollection, z } from "astro:content";
 
 const blog = defineCollection({
-  type: 'content',
+  type: "content",
   // Type-check frontmatter using a schema
   schema: z.object({
     title: z.string(),
@@ -13,10 +13,10 @@ const blog = defineCollection({
 
     // New fields for enhanced features
     draft: z.boolean().default(false),
-    category: z.enum(['tutorial', 'opinion', 'project', 'philosophy']),
+    category: z.enum(["tutorial", "opinion", "project", "philosophy"]),
     tags: z.array(z.string()).default([]),
     keywords: z.array(z.string()).optional(), // SEO keywords
-    author: z.string().default('Szymon Dzumak'),
+    author: z.string().default("Szymon Dzumak"),
     showToc: z.boolean().default(false), // Table of contents
     featured: z.boolean().default(false), // Featured post
     minutesToRead: z.number().optional(), // Will be calculated
@@ -26,6 +26,6 @@ const blog = defineCollection({
       url: z.string(),
     })).optional(),
   }),
-})
+});
 
-export const collections = { blog }
+export const collections = { blog };

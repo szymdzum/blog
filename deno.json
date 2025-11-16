@@ -10,137 +10,99 @@
     "@styles/*": "./src/styles/*",
     "@config/*": "./src/config/*",
     "@/*": "./src/*",
-    "@site-config": "./src/site-config.ts",
-    "@postSorter": "./src/utils/postSorter.ts"
+    "@site-config": "./src/site-config.ts"
   },
   "tasks": {
-    "dev": "deno run -A npm:astro dev",
-    "build": "deno run -A npm:astro build",
+    "dev": "./node_modules/.bin/astro dev",
+    "build": "./node_modules/.bin/astro build",
     "preview": "deno task preview-urls && deno task preview-serve",
     "preview-serve": "deno run --allow-net --allow-read jsr:@std/http/file-server dist --port 4321",
     "preview-urls": "echo '🚀 Preview server starting...' && echo '📍 Local: http://localhost:4321' && echo '📍 Network: http://'$(ipconfig getifaddr en0 2>/dev/null || echo 'localhost')':4321' && echo ''",
     "lint": "deno lint",
     "format": "deno fmt",
-    "check": "deno lint && deno fmt",
-    "check-all": "deno run -A npm:astro check && deno lint && deno fmt",
-    "check-format": "deno fmt --check src/ tests/ astro.config.mjs",
-    "test": "deno test --allow-read --allow-env",
-    "test:watch": "deno test --allow-read --allow-env --watch",
-    "test:coverage": "deno test --allow-read --allow-env --coverage=coverage && deno coverage coverage",
-    "fix": "deno lint --fix && deno fmt src/ tests/ astro.config.mjs",
-    "fix-all": "deno lint --fix && deno fmt"
+    "check": "deno lint && deno fmt --check",
+    "check-all": "./node_modules/.bin/astro check && deno lint && deno fmt --check",
+    "knip": "npx knip",
+    "fix": "deno lint --fix && deno fmt"
   },
   "lint": {
-    "rules": {
-      "tags": [
-        "recommended"
-      ],
-      "include": [
-        "no-any",
-        "no-explicit-any",
-        "no-unused-vars",
-        "prefer-const",
-        "no-inferrable-types",
-        "ban-untagged-todo",
-        "camelcase",
-        "no-window-prefix",
-        "no-throw-literal",
-        "no-undef",
-        "no-unreachable",
-        "constructor-super",
-        "for-direction",
-        "getter-return",
-        "no-array-constructor",
-        "no-async-promise-executor",
-        "no-case-declarations",
-        "no-class-assign",
-        "no-compare-neg-zero",
-        "no-cond-assign",
-        "no-const-assign",
-        "no-constant-condition",
-        "no-control-regex",
-        "no-debugger",
-        "no-delete-var",
-        "no-dupe-args",
-        "no-dupe-class-members",
-        "no-dupe-keys",
-        "no-duplicate-case",
-        "no-empty",
-        "no-empty-character-class",
-        "no-empty-pattern",
-        "no-ex-assign",
-        "no-extra-boolean-cast",
-        "no-extra-semi",
-        "no-fallthrough",
-        "no-func-assign",
-        "no-global-assign",
-        "no-import-assign",
-        "no-inner-declarations",
-        "no-invalid-regexp",
-        "no-irregular-whitespace",
-        "no-misleading-character-class",
-        "no-mixed-spaces-and-tabs",
-        "no-new-symbol",
-        "no-obj-calls",
-        "no-octal",
-        "no-prototype-builtins",
-        "no-redeclare",
-        "no-regex-spaces",
-        "no-self-assign",
-        "no-setter-return",
-        "no-shadow-restricted-names",
-        "no-sparse-arrays",
-        "no-this-before-super",
-        "use-isnan",
-        "valid-typeof"
-      ]
-    },
+    "include": [
+      "src/"
+    ],
     "exclude": [
       "dist/",
       "node_modules/",
       ".astro/",
       "coverage/"
-    ]
+    ],
+    "rules": {
+      "tags": [
+        "recommended"
+      ],
+      "include": [
+        "ban-untagged-todo",
+        "eqeqeq",
+        "no-await-in-loop",
+        "no-const-assign",
+        "no-eval",
+        "no-explicit-any",
+        "no-sparse-arrays",
+        "no-throw-literal",
+        "no-undef",
+        "no-unreachable",
+        "no-unused-vars",
+        "prefer-const"
+      ],
+      "exclude": [
+        "no-inferrable-types",
+        "triple-slash-reference"
+      ]
+    }
   },
   "fmt": {
     "useTabs": false,
-    "lineWidth": 120,
+    "lineWidth": 100,
     "indentWidth": 2,
-    "singleQuote": true,
+    "singleQuote": false,
     "proseWrap": "preserve",
-    "semiColons": false,
+    "semiColons": true,
+    "include": [
+      "src/",
+      "astro.config.mjs"
+    ],
     "exclude": [
       "dist/",
       "node_modules/",
       ".astro/",
       "coverage/",
-      "*.md"
+      "docs/"
     ]
   },
-  "test": {
-    "include": [
-      "tests/**/*.test.ts"
-    ],
-    "exclude": [
-      "dist/",
-      "node_modules/",
-      ".astro/"
-    ]
-  },
-  "nodeModulesDir": "auto",
-  "unstable": [],
   "compilerOptions": {
     "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": true,
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
     "jsx": "react-jsx",
     "jsxImportSource": "astro"
   },
-  "lock": false,
-  "deploy": {
-    "project": "devblog",
-    "exclude": [
-      "**/node_modules"
-    ],
-    "include": [],
-    "entrypoint": "jsr:@std/http/file-server"
-  }
+  "nodeModulesDir": "manual",
+  "lock": false
 }
