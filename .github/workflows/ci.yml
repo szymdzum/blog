@@ -7,71 +7,17 @@ on:
     branches: [main]
 
 jobs:
-  # Fast quality checks (run in parallel)
-  quality:
+  # Trigger Deno Deploy build (lint/format handled by pre-commit)
+  deploy:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        check: [lint, format]
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v2.x
-
-      - name: Cache Deno dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/deno
-          key: deno-${{ hashFiles('deno.json', 'deno.lock') }}
-          restore-keys: deno-
-
-      - name: Run ${{ matrix.check }}
-        run: |
-          if [ "${{ matrix.check }}" = "lint" ]; then
-            deno lint
-          else
-            deno fmt --check
-          fi
-
-  # Build and deploy (only after quality checks pass)
-  build:
-    runs-on: ubuntu-latest
-    needs: quality
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: read
       id-token: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: v2.x
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Cache Deno dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/deno
-          key: deno-${{ hashFiles('deno.json', 'deno.lock') }}
-          restore-keys: deno-
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: deno task build
-
       - name: Deploy to Deno Deploy
-        if: github.ref == 'refs/heads/main'
         uses: denoland/deployctl@v1
         with:
           project: devblog
