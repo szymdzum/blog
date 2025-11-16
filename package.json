@@ -11,6 +11,10 @@
     "typescript": "^5.9.2"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
     "knip": "^5.69.1"
+  },
+  "scripts": {
+    "prepare": "husky"
   }
 }
