@@ -1,4 +1,28 @@
 /**
+ * Formats a path segment into a properly structured URL path
+ * Ensures consistent leading/trailing slashes and handles edge cases
+ * @param path - The path segment to format (e.g., "blog/my-post", "about", "/contact/")
+ * @param options - Configuration options for URL formatting
+ * @returns A normalized URL path with consistent slash handling
+ */
+export function formatUrl(
+  path: string,
+  options: { trailingSlash?: boolean; leadingSlash?: boolean } = {},
+): string {
+  const { trailingSlash = true, leadingSlash = true } = options;
+
+  // Remove all leading/trailing slashes
+  const cleanPath = path.replace(/^\/+|\/+$/g, "");
+
+  // Build URL with configured slashes
+  let url = cleanPath;
+  if (leadingSlash) url = `/${url}`;
+  if (trailingSlash) url = `${url}/`;
+
+  return url;
+}
+
+/**
  * Checks if a given path should be considered "active" based on the current URL
  * Handles nested routes and normalizes trailing slashes
  */

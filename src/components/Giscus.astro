@@ -1,0 +1,38 @@
+---
+import { siteConfig } from "@/site-config";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={["giscus-wrapper", className]}>
+  <script
+    is:inline
+    src="https://giscus.app/client.js"
+    data-repo={siteConfig.giscus.repo}
+    data-repo-id={siteConfig.giscus.repoId}
+    data-category={siteConfig.giscus.category}
+    data-category-id={siteConfig.giscus.categoryId}
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="bottom"
+    data-theme={`${Astro.site?.origin ?? "https://kumak.dev"}/giscus-theme.css`}
+    data-lang="en"
+    data-loading="lazy"
+    crossorigin="anonymous"
+    async
+  ></script>
+</div>
+
+<style>
+  .giscus-wrapper {
+    margin-top: var(--space-3xl);
+    padding-top: var(--space-2xl);
+    border-top: var(--border-width) solid var(--color-border);
+  }
+</style>

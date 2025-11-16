@@ -27,4 +27,12 @@ export const siteConfig = {
 
   // Navigation items
   navItems: [],
+
+  // Giscus comments configuration
+  giscus: {
+    repo: "szymdzum/kumak-dev",
+    repoId: "R_kgDOPucytg",
+    category: "General",
+    categoryId: "DIC_kwDOPucyts4Cx3AI",
+  },
 } as const;

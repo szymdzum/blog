@@ -5,7 +5,10 @@
       "formatter": {
         "external": {
           "command": "deno",
-          "arguments": ["fmt", "-"]
+          "arguments": [
+            "fmt",
+            "-"
+          ]
         }
       },
       "format_on_save": "on"
@@ -15,7 +18,10 @@
       "formatter": {
         "external": {
           "command": "deno",
-          "arguments": ["fmt", "-"]
+          "arguments": [
+            "fmt",
+            "-"
+          ]
         }
       },
       "format_on_save": "on"

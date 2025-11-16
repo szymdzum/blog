@@ -1,17 +1,19 @@
 ---
 import DateFormatter from "@components/DateFormatter.astro";
+import { formatUrl } from "@utils/path";
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
   post: CollectionEntry<"blog">;
 }
 
-const { post } = Astro.props;
+const { post } = Astro.props
+const postUrl = formatUrl(post.slug);
 ---
 
 <article>
   <h3>
-    <a href={`/${post.slug}/`}>
+    <a href={postUrl}>
       {post.data.title}
     </a>
   </h3>
@@ -19,8 +21,8 @@ const { post } = Astro.props;
   <div class="meta">
     <DateFormatter date={post.data.pubDate} />
     <span aria-hidden="true">•</span>
-    <a href={`/${post.slug}/`}>
-      Read >>
+    <a href={postUrl} class="read-more">
+      Read
     </a>
   </div>
 </article>
@@ -65,5 +67,10 @@ const { post } = Astro.props;
 
   .meta a:hover {
     color: var(--color-primary-hover);
+  }
+
+  .read-more::after {
+    content: ">>";
+    margin-left: 0.25em;
   }
 </style>
