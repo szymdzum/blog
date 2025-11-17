@@ -120,7 +120,7 @@
   font-family: var(--font-family-mono);
   font-size: 0.875em;
   background-color: var(--color-bg-subtle);
-  color: var(--color-primary);
+  color: var(--color-text);
   padding: 0.2em 0.4em;
   border-radius: var(--radius-sm);
   border: var(--border-width) solid var(--color-border);
