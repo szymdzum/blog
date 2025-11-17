@@ -36,7 +36,7 @@ const currentPath = Astro.url.pathname;
             rel="noopener noreferrer"
             aria-label={`${siteConfig.author} on ${social.name}`}
           >
-            <Icon name={`lucide:${key}`} size={28} />
+            <Icon name={`lucide:${key}`} size={24} />
           </a>
         ))}
       </nav>
@@ -105,7 +105,7 @@ const currentPath = Astro.url.pathname;
 
   nav[aria-label="Social media"] {
     display: flex;
-    gap: var(--space-sm);
+    gap: calc(var(--space-xs) * 0.5);
   }
 
   nav[aria-label="Social media"] a {
