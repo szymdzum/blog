@@ -131,6 +131,15 @@
   font-size: 1em;
 }
 
+/* Override Shiki theme colors for WCAG AA contrast (4.5:1) */
+.prose pre code span[style*="color:#7F848E"] {
+  color: #9198a1 !important; /* comments: 4.81:1 */
+}
+
+.prose pre code span[style*="color:#E06C75"] {
+  color: #e5757e !important; /* variables: 4.78:1 */
+}
+
 @media (max-width: 480px) {
   .prose pre {
     font-size: 0.75em;

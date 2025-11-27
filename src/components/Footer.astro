@@ -23,7 +23,6 @@ const currentYear = new Date().getFullYear();
     font-size: var(--text-xs);
     color: var(--color-text-muted);
     text-align: center;
-    opacity: var(--opacity-strong);
   }
 
   p {
@@ -33,11 +32,12 @@ const currentYear = new Date().getFullYear();
 
   a {
     color: var(--color-primary);
-    text-decoration: none;
+    text-decoration: underline;
+    text-decoration-color: rgb(var(--color-primary-rgb) / 0.4);
   }
 
   a:hover {
-    text-decoration: underline;
+    text-decoration-color: var(--color-primary);
   }
 
   em {
