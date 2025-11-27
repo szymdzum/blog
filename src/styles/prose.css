@@ -148,6 +148,17 @@
   font-size: 1em;
 }
 
+@media (max-width: 480px) {
+  .prose pre {
+    font-size: 0.75em;
+    padding: var(--space-md);
+  }
+
+  .prose code {
+    font-size: 0.8em;
+  }
+}
+
 /* Blockquotes */
 .prose blockquote {
   position: relative;
@@ -183,4 +194,38 @@
 .prose img {
   border-radius: var(--radius);
   margin: var(--rhythm-single) 0;
+}
+
+/* Tables */
+.prose table {
+  max-width: 100%;
+  margin: var(--rhythm-double) 0;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  line-height: var(--line-height-normal);
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.prose thead {
+  border-bottom: var(--border-width-thick) solid var(--color-primary);
+}
+
+.prose th {
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-semibold);
+  text-align: left;
+  padding: var(--space-sm) var(--space-md);
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.prose td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.prose tbody tr:hover {
+  background-color: var(--color-bg-subtle);
 }

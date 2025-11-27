@@ -120,4 +120,15 @@ const currentPath = Astro.url.pathname;
   nav[aria-label="Social media"] svg {
     display: block;
   }
+
+  @media (max-width: 480px) {
+    .logo {
+      font-size: calc(var(--text-base) * 1.1);
+    }
+
+    nav[aria-label="Social media"] svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
 </style>

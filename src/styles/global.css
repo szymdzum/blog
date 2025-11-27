@@ -60,7 +60,7 @@ ol[role="list"] {
   --scale-3xl: 2.441;
 
   /* Base Units */
-  --base-font-size: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem); /* 18px-20px */
+  --base-font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem); /* 16px-18px */
   --base-spacing: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
 
   /* Typography Scale */

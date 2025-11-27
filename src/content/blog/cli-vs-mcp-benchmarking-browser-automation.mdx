@@ -124,8 +124,10 @@ bdg dom click "button[type=submit]"
 **MCP**: UID-based from accessibility tree
 
 ```javascript
-take_snapshot({});  // Returns 10k tokens
-click({ uid: "1_28" });  // Must find UID in snapshot first
+take_snapshot({});
+// Returns 10k tokens
+click({ uid: "1_28" });
+// Must find UID in snapshot first
 ```
 
 CSS selectors are more familiar to developers, but UID-based selection is more robust for dynamic content. Trade-offs exist on both sides.
@@ -136,7 +138,7 @@ There's a fundamental difference in how CLI tools and protocol servers handle li
 
 **CLI tools expose their constraints explicitly.** When a command fails, you get structured errors with exit codes, suggestions, and full context. This enables agents to self-correct:
 
-```txt
+```bash
 $ bdg dom click ".missing-button"
 Error: Element not found: .missing-button
 Exit code: 81 (user error)
