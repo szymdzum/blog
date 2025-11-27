@@ -15,7 +15,7 @@
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
   word-spacing: var(--word-spacing-tight);
-  margin-top: var(--rhythm-double);
+  margin-top: 0; /* Article header provides spacing */
   margin-bottom: var(--rhythm-single);
   letter-spacing: var(--letter-spacing-tight);
 }
@@ -26,9 +26,9 @@
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
   word-spacing: var(--word-spacing-tight);
-  margin-top: var(--space-3xl);
+  margin-top: var(--rhythm-double); /* ~3.2em */
   margin-bottom: var(--rhythm-half);
-  letter-spacing: var(--letter-spacing-tighter);
+  letter-spacing: var(--letter-spacing-tight);
 }
 
 .prose h3 {
@@ -37,7 +37,7 @@
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
   word-spacing: var(--word-spacing-tight);
-  margin-top: var(--space-2xl);
+  margin-top: var(--rhythm-1-5x); /* ~2.4em */
   margin-bottom: var(--rhythm-half);
   letter-spacing: var(--letter-spacing-tighter);
 }
@@ -48,7 +48,7 @@
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
   word-spacing: var(--word-spacing-tight);
-  margin-top: var(--space-xl);
+  margin-top: var(--rhythm-single); /* ~1.6em */
   margin-bottom: var(--rhythm-half);
 }
 
@@ -56,7 +56,7 @@
 .prose p {
   line-height: var(--line-height-normal);
   margin-bottom: var(--rhythm-single);
-  max-width: 75ch;
+  max-width: 70ch; /* Optimal for reading (45-75ch range) */
 }
 
 /* First paragraph after heading - reduce top spacing */
@@ -108,7 +108,6 @@
 
 .prose li {
   line-height: var(--line-height-normal);
-  margin-bottom: var(--rhythm-quarter);
 }
 
 .prose li + li {
@@ -135,7 +134,7 @@
   border-radius: var(--radius-sm);
   border: var(--border-width) solid var(--color-border);
   overflow-x: auto;
-  margin: var(--rhythm-double) 0;
+  margin: var(--rhythm-1-5x) 0;
   white-space: pre-wrap;
   word-break: break-word;
   box-shadow: inset 0 0 0 1px rgb(var(--color-primary-rgb) / 0.05);
@@ -167,13 +166,13 @@
   padding-top: var(--space-sm);
   padding-bottom: var(--space-sm);
   margin-left: 0;
-  margin-top: var(--rhythm-double);
-  margin-bottom: var(--rhythm-double);
+  margin-top: var(--rhythm-1-5x);
+  margin-bottom: var(--rhythm-1-5x);
   color: var(--color-text-muted);
   font-style: italic;
   font-size: var(--text-lg);
   line-height: var(--line-height-relaxed);
-  max-width: 65ch;
+  max-width: 70ch;
   background: var(--color-bg-subtle);
   border-radius: var(--radius-sm);
   padding-right: var(--space-md);
@@ -198,8 +197,8 @@
 
 /* Tables */
 .prose table {
-  max-width: 100%;
-  margin: var(--rhythm-double) 0;
+  width: 100%;
+  margin: var(--rhythm-1-5x) 0;
   border-collapse: collapse;
   font-size: var(--text-sm);
   line-height: var(--line-height-normal);
@@ -228,4 +227,55 @@
 
 .prose tbody tr:hover {
   background-color: var(--color-bg-subtle);
+}
+
+/* Heading Anchors */
+.prose .heading-anchor {
+  position: absolute;
+  left: calc(-1 * var(--space-lg));
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  padding-right: var(--space-xs);
+}
+
+.prose .heading-anchor,
+.prose .heading-anchor:hover,
+.prose .heading-anchor::after {
+  text-decoration: none;
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+.prose .anchor-icon {
+  color: var(--color-primary);
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-normal);
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  position: relative;
+}
+
+.prose h1:hover .heading-anchor,
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.prose h4:hover .heading-anchor,
+.prose h5:hover .heading-anchor,
+.prose h6:hover .heading-anchor,
+.prose .heading-anchor:focus {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .prose .heading-anchor {
+    position: static;
+    opacity: 1;
+    padding-right: var(--space-xs);
+  }
 }

@@ -23,7 +23,7 @@ externalLinks:
     url: "https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview"
 ---
 
-[Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview) are documents that guide an agent on using tools effectively. Think of a skill as instructions for "how I would use this CLI tool" - the commands I'd run, the patterns I'd follow, the mistakes I'd avoid. Agent Skills are just a conceptual framework backed by ordinary Markdown files with YAML metadata (at least for CC)
+[Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview) are documents that guide an agent on using tools effectively. Think of a skill as instructions for "how I would use this CLI tool" - the commands I'd run, the patterns I'd follow, the mistakes I'd avoid. Agent Skills are just a conceptual framework backed by ordinary Markdown files with YAML metadata (at least for Claude Code)
 
 What's interesting isn't the skill itself. It's how it develops.
 
@@ -39,7 +39,7 @@ I watched Claude notice the discrepancy, run `glab api --help`, spot the `--pagi
 
 That's when I realised CLI tools have something different. They let agents teach themselves.
 
-In the first investigation, Claude obtained the pipeline status and listed the failed jobs. Then pulled logs with `glab ci trace <job-id>`. The logs looked clean. No errors visible. But the job had definitely failed.
+In the first investigation, Claude obtained the pipeline status and listed the failed jobs. It then pulled logs with `glab ci trace <job-id>`. The logs looked clean. No errors visible. But the job had definitely failed.
 
 I didn't explain what was wrong. I asked Claude: "The job failed, but you're not seeing errors. What might be happening?"
 
@@ -72,10 +72,10 @@ Then we updated the skill file with what became critical best practices:
 ```markdown
 ## Critical Best Practices
 
-1. **Always use --paginate** for job queries (pipelines have 80+ jobs)
+1. **Always use --paginate** for job queries
 2. **Always capture stderr** with `2>&1` when getting logs
 3. **Always check for child pipelines** via bridges API
-4. **Limit log output** to avoid overwhelming context (use `tail -100` or `head -50`)
+4. **Limit log output** use `tail -100` or `head -50`
 ```
 
 Twenty minutes of reflection. Four critical lessons documented. The next session will start better.
@@ -103,8 +103,7 @@ End of session, we added a new pattern to the skill file:
 ```markdown
 ## Pattern: Multiple Failed Jobs
 
-When many jobs fail (e.g., all Image builds), check ONE representative job first -
-they often have identical errors.
+When many jobs fail (e.g., all Image builds), check representative job first often have identical errors.
 
 # Get first failed job
 
@@ -160,7 +159,7 @@ bad project credentials
 → BundleMon service access issue (doesn't fail the build, but shows in logs)
 ```
 
-This is no longer just a command reference. It's institutional knowledge about this specific codebase, including what's standard, common patterns to look for, and efficient investigation methods.
+This is no longer just a command reference. It's institutional knowledge about this specific codebase—what's standard, common patterns to look for, and efficient investigation methods.
 
 ## What Makes This Work
 
@@ -201,10 +200,11 @@ This three-step workflow emerged from Claude's missing UI test failures, the dis
 
 After each investigation session, I ask the same questions:
 
-"What went wrong during this session?" "What went well?"\
-"What should you do differently next time?"
+- "What went wrong during this session?"
+- "What went well?"
+- "What should you do differently next time?"
 
-Claude reviews what happened. List mistakes. Explains what it learned. We talk through why each issue mattered and how to avoid it.
+Claude reviews what happened. Lists mistakes. Explains what it learned. We talk through why each issue mattered and how to avoid it.
 
 Then we update the skill file. Sometimes it's a new command pattern. Sometimes it's a reminder about pagination. Sometimes it's project-specific knowledge, such as "checkout builds take 44 minutes."
 
@@ -257,7 +257,7 @@ Things like:
 - "When all Image builds fail, check one representative job"
 - "Checkout builds taking 44 minutes is normal, not a failure"
 
-These are patterns that came from experience, not from reading documentation. They possess institutional knowledge about how this specific codebase operates, including standard failure modes and efficient methods for investigating issues.
+These patterns came from experience, not from reading documentation. They represent institutional knowledge about how this specific codebase operates—standard failure modes and efficient methods for investigating issues.
 
 The help flag tells you what's possible. The skill file tells you what's effective. Together, they create a learning environment where the agent gets better with each session.
 
@@ -271,6 +271,6 @@ Your role is to facilitate reflection. After each session, you ask what went wro
 
 Three sessions transformed a previously unfamiliar tool into something the agent uses confidently. Not because I wrote perfect documentation, but because CLI tools provide everything needed for self-directed learning.
 
-The errors are clear. The documentation is at hand. The feedback is immediate. The agent needs to use the tool, reflect on what happened, and record what they learned.
+The errors are clear. The documentation is at hand. The feedback is immediate. The agent needs to use the tool, reflect on what happened, and record what it learned.
 
 [That's how this skill developed](https://gist.github.com/szymdzum/304645336c57c53d59a6b7e4ba00a7a6).

@@ -97,7 +97,7 @@ ol[role="list"] {
   /* Colors - Terminal Dark Theme */
   --color-text: #e8e8e0;
   --color-text-muted: #8b8b8b;
-  --color-text-subtle: #5e5e5e;
+  --color-text-subtle: #858585; /* 5.2:1 contrast - WCAG AA compliant */
   --color-bg: #101113;
   --color-bg-subtle: #16151d;
   --color-bg-muted: #1d1c24;
@@ -160,7 +160,9 @@ ol[role="list"] {
   --rhythm-quarter: calc(var(--line-height-normal) * 0.25em);
   --rhythm-half: calc(var(--line-height-normal) * 0.5em);
   --rhythm-single: calc(var(--line-height-normal) * 1em);
+  --rhythm-1-5x: calc(var(--line-height-normal) * 1.5em);
   --rhythm-double: calc(var(--line-height-normal) * 2em);
+  --rhythm-2-5x: calc(var(--line-height-normal) * 2.5em);
 
   /* Shadows */
   --shadow-sm: 0 0.0625rem 0.125rem rgb(var(--color-text-rgb) / 0.05);
@@ -198,6 +200,7 @@ html {
   font-family: var(--font-family-base);
   font-size: var(--text-base);
   line-height: var(--line-height-normal);
+  letter-spacing: 0.01em; /* Subtle spacing for dark mode readability */
   color: var(--color-text);
   background-color: var(--color-bg);
   transition: color var(--transition-normal), background-color var(--transition-normal);

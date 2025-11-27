@@ -47,7 +47,7 @@ What caught my attention: They're building a system where agents discover execut
 
 This pattern becomes clearest with databases. Popular PostgreSQL and SQLite MCP servers market themselves as providing "read-only access," "schema inspection," and "secure query execution." These sound valuable if you're not familiar with the capabilities of the CLI tools.
 
-SQLite's command-line tool has supported JSON output mode since version 3.33.0 in 2020
+SQLite's command-line tool has supported JSON output mode since version 3.33.0 in 2020.
 
 ```bash
 sqlite3 mydb.db 'SELECT * FROM users WHERE active = true' -json
@@ -71,7 +71,7 @@ gh run view 12345 --json conclusion,status,jobs
 
 The GitHub CLI even includes a built-in `--jq` flag for filtering JSON directly. The tool was designed from the start to be scriptable.
 
-These MCP wrappers add six serialisation steps to something that already outputs structured data. This isn't theoretical overhead. [Twilio's performance testing](https://www.twilio.com/en-us/blog/developers/twilio-alpha-mcp-server-real-world-performance) of their MCP server showed that they reduced API calls by 21.6% but increased cache reads by 28.5% and cache writes by 53.7%. Overall cost per task increased by 23.5%. They wrapped an API they already had access to, added an MCP layer to optimise it, and ended up paying more in tokens.
+These MCP wrappers add unnecessary serialisation layers to something that already outputs structured data—receiving MCP requests, parsing them, constructing CLI commands, executing them, parsing output, and serialising back to MCP format. This isn't theoretical overhead. [Twilio's performance testing](https://www.twilio.com/en-us/blog/developers/twilio-alpha-mcp-server-real-world-performance) of their MCP server showed that they reduced API calls by 21.6% but increased cache reads by 28.5% and cache writes by 53.7%. Overall cost per task increased by 23.5%. They wrapped an API they already had access to, added an MCP layer to optimise it, and ended up paying more in tokens.
 
 ## When MCP Actually Makes Sense
 
