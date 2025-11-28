@@ -58,12 +58,9 @@ const readingTime = estimateReadingTime(post.body);
       <h1>{title}</h1>
       <div class="post-meta">
         <div class="meta-left">
-          <span class="published-date">
-            <span class="published-label">Published</span>
-            <time datetime={pubDate.toISOString().split("T")[0]}>
-              <DateFormatter date={pubDate} />
-            </time>
-          </span>
+          <time datetime={pubDate.toISOString().split("T")[0]}>
+            <DateFormatter date={pubDate} />
+          </time>
           <span class="separator">·</span>
           <span class="reading-time">{readingTime} min read</span>
           <span class="separator">·</span>
@@ -113,12 +110,6 @@ const readingTime = estimateReadingTime(post.body);
     gap: var(--space-xs);
   }
 
-  .published-date {
-    display: flex;
-    align-items: center;
-    gap: 0.25em;
-  }
-
   .separator {
     color: var(--color-text-subtle);
   }
@@ -127,12 +118,6 @@ const readingTime = estimateReadingTime(post.body);
     color: var(--color-primary);
     text-transform: capitalize;
     font-weight: var(--font-weight-medium);
-  }
-
-  @media (max-width: 768px) {
-    .published-label {
-      display: none;
-    }
   }
 
   @media (max-width: 480px) {
