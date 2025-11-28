@@ -1,6 +1,6 @@
 const SCROLL_OFFSET = 100;
 const HEADING_SELECTOR = "article h2[id]";
-const TOC_LINK_SELECTOR = ".toc a";
+const TOC_LINK_SELECTOR = "[data-toc] a";
 
 function getHeadings(): HTMLHeadingElement[] {
   return Array.from(document.querySelectorAll<HTMLHeadingElement>(HEADING_SELECTOR));

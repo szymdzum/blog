@@ -1,47 +1,26 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { siteConfig } from "@/site-config";
-import { isPathActive } from "@/utils/path";
-
-const currentPath = Astro.url.pathname;
 ---
 
 <header>
-  <div class="nav-container">
-    <a href="/" class="logo" aria-label="The Null Hypothesis home">
-      [The Null Hypothesis]
-    </a>
-    <div class="nav-group">
-      <nav class="main-nav" aria-label="Main navigation">
-        <ul role="list">
-          {siteConfig.navItems.map(({ href, title }) => (
-            <li>
-              <a
-                href={href}
-                aria-current={isPathActive(currentPath, href) ? "page" : undefined}
-              >
-                {title}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <nav class="social-nav" aria-label="Social media">
-        {Object.entries(siteConfig.socials).map(([key, social]) => {
-          const isExternal = social.url.startsWith("http");
-          return (
-            <a
-              href={social.url}
-              target={isExternal ? "_blank" : undefined}
-              rel={isExternal ? "noopener noreferrer" : undefined}
-              aria-label={isExternal ? `${siteConfig.author} on ${social.name}` : `Subscribe via ${social.name}`}
-            >
-              <Icon name={`lucide:${key}`} size={24} />
-            </a>
-          );
-        })}
-      </nav>
-    </div>
+  <div>
+    <a href="/" aria-label="The Null Hypothesis home">[The Null Hypothesis]</a>
+    <nav aria-label="Social links">
+      {Object.entries(siteConfig.socials).map(([key, social]) => {
+        const isExternal = social.url.startsWith("http");
+        return (
+          <a
+            href={social.url}
+            target={isExternal ? "_blank" : undefined}
+            rel={isExternal ? "noopener noreferrer" : undefined}
+            aria-label={isExternal ? `${siteConfig.author} on ${social.name}` : `Subscribe via ${social.name}`}
+          >
+            <Icon name={`lucide:${key}`} size={24} />
+          </a>
+        );
+      })}
+    </nav>
   </div>
 </header>
 
@@ -50,7 +29,7 @@ const currentPath = Astro.url.pathname;
     padding: var(--space-md) 0;
   }
 
-  .nav-container {
+  div {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -59,7 +38,7 @@ const currentPath = Astro.url.pathname;
     padding: 0 var(--space-md);
   }
 
-  .logo {
+  header > div > a {
     font-family: var(--font-family-display);
     color: var(--color-primary);
     text-decoration: none;
@@ -69,68 +48,34 @@ const currentPath = Astro.url.pathname;
     transition: color var(--transition-fast);
   }
 
-  .logo:hover {
+  header > div > a:hover {
     color: var(--color-primary);
   }
 
-  .nav-group {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xl);
-  }
-
-  .main-nav ul {
-    display: flex;
-    gap: var(--space-lg);
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .main-nav li {
-    margin: 0;
-  }
-
-  .main-nav a {
-    color: var(--color-text);
-    text-decoration: none;
-    font-weight: var(--font-weight-medium);
-    transition: color var(--transition-fast);
-  }
-
-  .main-nav a:hover {
-    color: var(--color-primary);
-  }
-
-  .main-nav a[aria-current="page"] {
-    color: var(--color-primary);
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .social-nav {
+  nav {
     display: flex;
     gap: calc(var(--space-xs) * 0.5);
   }
 
-  .social-nav a {
+  nav a {
     color: var(--color-text);
     transition: color var(--transition-fast);
   }
 
-  .social-nav a:hover {
+  nav a:hover {
     color: var(--color-primary);
   }
 
-  .social-nav svg {
+  nav svg {
     display: block;
   }
 
   @media (max-width: 480px) {
-    .logo {
+    header > div > a {
       font-size: calc(var(--text-base) * 1.1);
     }
 
-    .social-nav svg {
+    nav svg {
       width: 20px;
       height: 20px;
     }

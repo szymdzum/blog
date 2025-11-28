@@ -12,7 +12,7 @@ const { links = [] } = Astro.props;
 ---
 
 {links.length > 0 && (
-  <aside class="further-reading">
+  <aside>
     <h2>Further Reading</h2>
     <ul>
       {links.map((link) => (
@@ -27,7 +27,7 @@ const { links = [] } = Astro.props;
 )}
 
 <style>
-  .further-reading {
+  aside {
     margin-top: var(--space-xl);
     padding-top: var(--space-md);
     border-top: var(--border-width) solid var(--color-border);

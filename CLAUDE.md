@@ -68,9 +68,12 @@ BaseLayout <style>         → Page layout + prose styles
 **Rules:**
 - ✅ All component styles in scoped `<style>` blocks
 - ✅ Use design tokens from global.css (--space-*, --color-*, --text-*)
+- ✅ Prefer element selectors in scoped styles (no class noise)
+- ✅ Use `data-*` attributes for JS hooks (not classes)
 - ❌ NO component styles in global.css
 - ❌ NO element selectors in global (h1, nav, article)
 - ❌ NO inline styles
+- ❌ NO classes unless required for JS or complex selectors
 
 **Design Tokens:**
 - Spacing: `--space-xs` through `--space-3xl` (harmonic 1.25 scale)

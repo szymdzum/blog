@@ -15,7 +15,9 @@ import { estimateReadingTime, type BlogPost } from "@utils/posts";
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
+  const posts = await getCollection("blog", ({ data }) => {
+    return import.meta.env.DEV || !data.draft;
+  });
   return posts.map((post: BlogPost) => ({
     params: { slug: post.slug },
     props: post,

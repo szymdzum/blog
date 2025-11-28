@@ -15,9 +15,9 @@ const tocHeadings = headings.filter((h) => h.depth === 2);
 ---
 
 {tocHeadings.length > 0 && (
-  <nav class="toc" aria-label="Table of contents">
-    <div class="toc-inner">
-      <span class="toc-label">On this page</span>
+  <nav data-toc aria-label="Table of contents">
+    <div>
+      <span>On this page</span>
       <ul>
         {tocHeadings.map((heading) => (
           <li>
@@ -30,7 +30,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2);
 )}
 
 <style>
-  .toc {
+  nav {
     position: absolute;
     top: 0;
     right: 0;
@@ -40,12 +40,12 @@ const tocHeadings = headings.filter((h) => h.depth === 2);
     font-size: var(--text-xs);
   }
 
-  .toc-inner {
+  div {
     position: sticky;
     top: var(--space-xl);
   }
 
-  .toc-label {
+  span {
     display: block;
     font-family: var(--font-family-display);
     font-weight: var(--font-weight-semibold);
@@ -89,7 +89,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2);
   }
 
   @media (max-width: 1400px) {
-    .toc {
+    nav {
       display: none;
     }
   }

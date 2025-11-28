@@ -24,9 +24,6 @@ export const siteConfig = {
     },
   },
 
-  // Navigation items
-  navItems: [],
-
   // Giscus comments configuration
   giscus: {
     repo: "szymdzum/kumak-dev",
