@@ -28,17 +28,17 @@ const { links = [] } = Astro.props;
 
 <style>
   .further-reading {
-    margin-top: var(--space-2xl);
-    padding-top: var(--space-lg);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
     border-top: var(--border-width) solid var(--color-border);
   }
 
   h2 {
     font-family: var(--font-family-display);
-    font-size: var(--text-base);
+    font-size: var(--text-sm);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-muted);
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-xs);
   }
 
   ul {
@@ -48,7 +48,11 @@ const { links = [] } = Astro.props;
   }
 
   li {
-    padding: var(--space-xs) 0;
+    line-height: var(--line-height-snug);
+  }
+
+  li + li {
+    margin-top: 2px;
   }
 
   a {
