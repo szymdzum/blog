@@ -17,6 +17,8 @@ const { markdown } = Astro.props;
   const button = document.getElementById('copyPageButton');
   const buttonText = document.getElementById('buttonText');
 
+  if (!button || !buttonText) throw new Error('CopyPageButton elements not found');
+
   button.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(markdown);

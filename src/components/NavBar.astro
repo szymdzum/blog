@@ -3,8 +3,6 @@ import { Icon } from 'astro-icon/components';
 import { siteConfig } from "@/site-config";
 import { isPathActive } from "@/utils/path";
 
-interface Props {}
-
 const currentPath = Astro.url.pathname;
 ---
 
@@ -14,7 +12,7 @@ const currentPath = Astro.url.pathname;
       [The Null Hypothesis]
     </a>
     <div class="nav-group">
-      <nav aria-label="Main navigation">
+      <nav class="main-nav" aria-label="Main navigation">
         <ul role="list">
           {siteConfig.navItems.map(({ href, title }) => (
             <li>
@@ -28,7 +26,7 @@ const currentPath = Astro.url.pathname;
           ))}
         </ul>
       </nav>
-      <nav aria-label="Social media">
+      <nav class="social-nav" aria-label="Social media">
         {Object.entries(siteConfig.socials).map(([key, social]) => {
           const isExternal = social.url.startsWith("http");
           return (
@@ -81,7 +79,7 @@ const currentPath = Astro.url.pathname;
     gap: var(--space-xl);
   }
 
-  nav[aria-label="Main navigation"] ul {
+  .main-nav ul {
     display: flex;
     gap: var(--space-lg);
     list-style: none;
@@ -89,41 +87,41 @@ const currentPath = Astro.url.pathname;
     margin: 0;
   }
 
-  nav[aria-label="Main navigation"] li {
+  .main-nav li {
     margin: 0;
   }
 
-  nav[aria-label="Main navigation"] a {
+  .main-nav a {
     color: var(--color-text);
     text-decoration: none;
     font-weight: var(--font-weight-medium);
     transition: color var(--transition-fast);
   }
 
-  nav[aria-label="Main navigation"] a:hover {
+  .main-nav a:hover {
     color: var(--color-primary);
   }
 
-  nav[aria-label="Main navigation"] a[aria-current="page"] {
+  .main-nav a[aria-current="page"] {
     color: var(--color-primary);
     font-weight: var(--font-weight-semibold);
   }
 
-  nav[aria-label="Social media"] {
+  .social-nav {
     display: flex;
     gap: calc(var(--space-xs) * 0.5);
   }
 
-  nav[aria-label="Social media"] a {
+  .social-nav a {
     color: var(--color-text);
     transition: color var(--transition-fast);
   }
 
-  nav[aria-label="Social media"] a:hover {
+  .social-nav a:hover {
     color: var(--color-primary);
   }
 
-  nav[aria-label="Social media"] svg {
+  .social-nav svg {
     display: block;
   }
 
@@ -132,7 +130,7 @@ const currentPath = Astro.url.pathname;
       font-size: calc(var(--text-base) * 1.1);
     }
 
-    nav[aria-label="Social media"] svg {
+    .social-nav svg {
       width: 20px;
       height: 20px;
     }

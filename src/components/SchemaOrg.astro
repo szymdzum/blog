@@ -26,6 +26,16 @@ const {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const imageURL = image ? new URL(image, Astro.site).href : new URL(siteConfig.image, Astro.site).href;
 
+const publisher = {
+  "@type": "Organization",
+  "name": siteConfig.name,
+  "url": siteConfig.url,
+  "logo": {
+    "@type": "ImageObject",
+    "url": `${siteConfig.url}/favicon.svg`,
+  },
+};
+
 let schema = {};
 
 if (type === "BlogPosting") {
@@ -43,15 +53,7 @@ if (type === "BlogPosting") {
       "name": author,
       "url": siteConfig.socials.github.url,
     },
-    "publisher": {
-      "@type": "Organization",
-      "name": siteConfig.name,
-      "url": siteConfig.url,
-      "logo": {
-        "@type": "ImageObject",
-        "url": `${siteConfig.url}/favicon.svg`,
-      },
-    },
+    publisher,
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": url || canonicalURL.href,
@@ -71,15 +73,7 @@ if (type === "BlogPosting") {
       "name": siteConfig.author,
       "url": siteConfig.socials.github.url,
     },
-    "publisher": {
-      "@type": "Organization",
-      "name": siteConfig.name,
-      "url": siteConfig.url,
-      "logo": {
-        "@type": "ImageObject",
-        "url": `${siteConfig.url}/favicon.svg`,
-      },
-    },
+    publisher,
   };
 }
 ---

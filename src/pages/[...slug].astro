@@ -52,46 +52,49 @@ const readingTime = estimateReadingTime(post.body);
     image={heroImage}
     slot="head"
   />
-  <div class="article-wrapper">
-  <article>
-    <header class="post-header">
-      <h1>{title}</h1>
-      <div class="post-meta">
-        <div class="meta-left">
-          <time datetime={pubDate.toISOString().split("T")[0]}>
-            <DateFormatter date={pubDate} />
-          </time>
-          <span class="separator">·</span>
-          <span class="reading-time">{readingTime} min read</span>
-          <span class="separator">·</span>
-          <span class="category">{category}</span>
+  <div class="article-layout">
+    <article>
+      <header>
+        <h1>{title}</h1>
+        <div class="meta-row">
+          <dl>
+            <dt>Published</dt>
+            <dd>
+              <time datetime={pubDate.toISOString().split("T")[0]}>
+                <DateFormatter date={pubDate} />
+              </time>
+            </dd>
+            <dt>Reading time</dt>
+            <dd><data value={readingTime}>{readingTime} min read</data></dd>
+            <dt>Category</dt>
+            <dd>{category}</dd>
+          </dl>
+          <CopyPageButton markdown={post.body} />
         </div>
-        <CopyPageButton markdown={post.body} />
+      </header>
+      <div class="prose">
+        <Content components={{ pre: CodeBlock }} />
       </div>
-    </header>
-    <div class="prose">
-      <Content components={{ pre: CodeBlock }} />
-    </div>
-    <FurtherReading links={externalLinks} />
-    <ArticleFooter />
-    <Giscus />
-  </article>
-  <TableOfContents headings={headings} />
+      <FurtherReading links={externalLinks} />
+      <ArticleFooter />
+      <Giscus />
+    </article>
+    <TableOfContents headings={headings} />
   </div>
 </BaseLayout>
 
 <style>
-  .article-wrapper {
+  .article-layout {
     position: relative;
   }
 
-  .post-header {
+  header {
     margin-bottom: var(--space-xl);
     padding-bottom: calc(var(--space-xs) * 0.5);
     border-bottom: var(--border-width) solid var(--color-border);
   }
 
-  .post-header h1 {
+  header h1 {
     font-family: var(--font-family-display);
     font-size: var(--text-2xl);
     font-weight: var(--font-weight-semibold);
@@ -101,35 +104,53 @@ const readingTime = estimateReadingTime(post.body);
     margin-bottom: var(--space-md);
   }
 
-  .post-meta {
+  .meta-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: var(--space-xs);
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
   }
 
-  .meta-left {
+  header dl {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: var(--space-xs);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin: 0;
   }
 
-  .separator {
+  header dt {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  header dd {
+    margin: 0;
+  }
+
+  header dd + dd::before {
+    content: "·";
+    margin-right: var(--space-xs);
     color: var(--color-text-subtle);
   }
 
-  .category {
+  header dd:last-of-type {
     color: var(--color-primary);
     text-transform: capitalize;
     font-weight: var(--font-weight-medium);
   }
 
   @media (max-width: 480px) {
-    .post-header h1 {
+    header h1 {
       font-size: var(--text-xl);
     }
   }

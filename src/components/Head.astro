@@ -14,6 +14,7 @@ const {
   description = siteConfig.description,
   image = siteConfig.image,
 } = Astro.props;
+const imageURL = new URL(image, Astro.site).href;
 ---
 
 <head>
@@ -29,12 +30,12 @@ const {
   <meta property="og:url" content={Astro.url} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:image" content={new URL(image, Astro.site).href} />
+  <meta property="og:image" content={imageURL} />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content={new URL(image, Astro.site).href} />
+  <meta name="twitter:image" content={imageURL} />
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 

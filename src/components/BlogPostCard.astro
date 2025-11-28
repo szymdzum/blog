@@ -21,9 +21,7 @@ const postUrl = formatUrl(post.slug);
   <div class="meta">
     <DateFormatter date={post.data.pubDate} />
     <span aria-hidden="true">•</span>
-    <a href={postUrl} class="read-more">
-      Read
-    </a>
+    <a href={postUrl} class="read-more" aria-hidden="true" tabindex="-1">Read</a>
   </div>
 </article>
 
@@ -61,13 +59,13 @@ const postUrl = formatUrl(post.slug);
     color: var(--color-text-muted);
   }
 
-  .meta a {
+  .read-more {
     color: var(--color-primary);
     text-decoration: none;
     transition: color var(--transition-fast);
   }
 
-  .meta a:hover {
+  .read-more:hover {
     color: var(--color-primary-hover);
   }
 

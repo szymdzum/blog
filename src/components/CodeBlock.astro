@@ -105,8 +105,6 @@ type Props = HTMLAttributes<'pre'>;
     });
   }
 
-  document.addEventListener('astro:page-load', initCopyButtons);
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initCopyButtons);
   } else {
