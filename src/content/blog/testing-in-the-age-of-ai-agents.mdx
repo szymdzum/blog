@@ -1,0 +1,251 @@
+---
+title: "Testing in the Age of AI Agents"
+description: "When code changes at the speed of thought, tests become less about verification and more about defining what should remain stable. A philosophy for testing when AI agents write and rewrite your code."
+pubDate: 2025-11-28
+category: "philosophy"
+tags: ["testing", "ai-agents", "software-philosophy", "refactoring"]
+keywords: [
+  "AI-assisted development",
+  "test-driven development",
+  "contract testing",
+  "software testing philosophy",
+  "refactoring",
+  "Claude Code",
+]
+author: "Szymon Dzumak"
+showToc: true
+featured: false
+externalLinks:
+  - title: "Software Engineering at Google: Unit Testing"
+    url: "https://abseil.io/resources/swe-book/html/ch12.html"
+  - title: "Ian Cooper: TDD, Where Did It All Go Wrong"
+    url: "https://keyvanakbary.github.io/learning-notes/talks/tdd-where-did-it-all-go-wrong/"
+  - title: "Kent Beck: Canon TDD"
+    url: "https://tidyfirst.substack.com/p/canon-tdd"
+---
+
+import TldrBox from '@components/TldrBox.astro';
+
+<TldrBox>
+AI agents make code change cheap. If your tests are coupled to implementation details, they become the new friction.
+
+Test what the code *does*, not how it does it. Contract-based tests survive rewrites. Implementation coupled tests fight them.
+</TldrBox>
+
+Something strange happens when you start working with AI agents. Code that would take hours to write appears in minutes. Refactors that seemed daunting become trivial. The friction that once slowed changes down largely disappears. The tedium of updating every reference, the fear of breaking something obscure. Gone.
+
+Code becomes fluid. Malleable. You describe what you want, and it reshapes itself. This fluidity changes everything about how we think about tests.
+
+## The New Equilibrium
+
+For decades, we've lived with a particular tension in software development. Tests exist to catch bugs, but they also exist as documentation, as proof of intent, as a safety net. We accepted that comprehensive tests came with a cost: they made changes harder. Touch anything, and you might spend as much time fixing tests as fixing code.
+
+This was a reasonable trade-off when change was expensive. When every modification required careful, manual edits across dozens of files, test maintenance was just part of the cost of doing business. You paid for safety with friction.
+
+AI agents break this equilibrium.
+
+When an agent can rewrite a module in seconds, the cost of change approaches zero. But if your tests are tightly coupled to implementation details, you've created a new kind of friction. Not in the code itself, but in the tests that surround it. The agent rewrites your component, and now you're spending twenty minutes fixing test expectations that spy on internal functions and assert on DOM structures that no longer exist.
+
+The tests haven't caught a bug. The behaviour is identical. You're just paying a tax on change.
+
+## What Tests Are Actually For
+
+This forces a more fundamental question: what are tests actually for?
+
+The obvious answer is "catching bugs." But that's incomplete. A test that breaks when behaviour changes is valuable. A test that breaks when implementation changes, but behaviour stays the same, is worse than useless. It actively punishes improvement.
+
+Good tests encode intent. They say:
+```
+"This is the contract. This is what matters. Everything else is negotiable."
+```
+
+[Kent Beck](https://tidyfirst.substack.com/p/canon-tdd) captured this distinction precisely: tests should be "sensitive to behavior changes and insensitive to structure changes." A test that responds to behaviour is doing its job. A test that responds to structure is doing the opposite. It's punishing you for improving code that works.
+
+When you test that a navigation component renders a link to `/orders`, you're encoding intent: users should be able to navigate to their orders. When you test that the component calls a specific internal styling function with specific parameters, you're encoding an implementation detail that could change tomorrow.
+
+The first test survives refactoring. The second test fights it.
+
+## The Contract Principle
+
+The solution isn't fewer tests. It's different tests.
+
+Think of every module, every component, every function as having a contract. An agreement about what it does, not how it does it. The contract for a navigation item might be:
+
+- Renders as a clickable link
+- Takes users to the specified destination
+- Shows the provided label
+- Optionally displays an icon
+
+Notice what's absent: nothing about internal state management, styling implementations, or DOM structure beyond what's semantically necessary. Those are implementation details. The contract doesn't care.
+
+When you test the contract, you're testing what matters. You're creating a specification that says: "As long as these things remain true, the module is working correctly." Everything inside that boundary is free to change.
+
+The difference is stark in practice:
+
+```typescript
+// Testing implementation — breaks when you refactor
+test('calls navItemVariants with correct params', () => {
+  const spy = vi.spyOn(styles, 'navItemVariants');
+  render(<NavItem to="/orders">Orders</NavItem>);
+  expect(spy).toHaveBeenCalledWith({ active: false });
+});
+
+// Testing contract — survives any rewrite
+test('renders as a link to the specified route', () => {
+  render(<NavItem to="/orders">Orders</NavItem>);
+  const link = screen.getByRole('link', { name: /orders/i });
+  expect(link).toHaveAttribute('href', '/orders');
+});
+```
+
+The first test knows too much. It knows the component uses a function called `navItemVariants`. It knows the parameter shape. Tomorrow, you might rename that function, restructure those parameters, or eliminate them entirely. The test breaks. The component still works.
+
+The second test knows only what matters: there's a link, it goes to `/orders`, it says "Orders." Rewrite the entire component. Change the styling system. Swap the underlying implementation. As long as users can click a link to their orders, the test passes.
+
+This isn't a new idea. Google's engineering team articulated it well in [Software Engineering at Google](https://abseil.io/resources/swe-book/html/ch12.html): "The ideal test is unchanging: after it's written, it never needs to change unless the requirements of the system under test change." That's the goal. Tests that only break when behaviour breaks.
+
+It's just an idea that becomes urgent when change is cheap.
+
+## The Black Box Philosophy
+
+Treat every module like a black box. You know what goes in (props, configuration, inputs). You know what should come out (rendered output, side effects, return values). What happens inside is none of your tests' business.
+
+This sounds abstract, but it's remarkably practical. Instead of spying on internal functions to verify they're called correctly, render the component and check that the output looks right. Instead of mocking your own code to test individual pieces in isolation, test the assembled whole and verify it behaves correctly.
+
+You lose visibility into internals. You gain freedom to change them.
+
+The black box principle also clarifies what to mock. External systems (APIs, databases, third-party services) exist outside your black box. Mock those. Your own modules exist inside. Don't mock those; let them run.
+
+```typescript
+// Mock external systems — they're outside your control
+vi.mock('~/api/client', () => ({
+  fetchUser: vi.fn().mockResolvedValue({ name: 'Test User' })
+}));
+
+// Don't mock your own code — let it run
+// ❌ vi.mock('~/components/ui/NavItem');
+// ❌ vi.spyOn(myModule, 'internalHelper');
+```
+
+When you mock your own code, you're encoding the current implementation into your tests. When the implementation changes, your mocks become lies. They describe a structure that no longer exists, and your tests pass while your code breaks.
+
+As Ian Cooper [put it](https://keyvanakbary.github.io/learning-notes/talks/tdd-where-did-it-all-go-wrong/): "Your API is your contract, your tests should test the API, not the implementation details. Coupling is the first problem in software." The same coupling that makes code hard to change makes tests hard to live with.
+
+## Properties Over Examples
+
+There's a subtle distinction between testing examples and testing properties.
+
+An example test says: "When I render the navigation with these specific items, I see these specific labels." A property test says: "Whatever items I provide, each one appears as a navigable link."
+
+Example tests are fragile. They encode specific scenarios that might or might not represent the full space of valid inputs. Property tests are robust. They encode invariants: things that should always be true, regardless of specific inputs.
+
+```typescript
+// Example test — tests one specific case
+test('renders Orders link', () => {
+  render(<Navigation items={[{ to: '/orders', label: 'Orders' }]} />);
+  expect(screen.getByText('Orders')).toBeInTheDocument();
+});
+
+// Property test — tests the invariant
+test('renders all provided items as navigable links', () => {
+  const items = [
+    { to: '/orders', label: 'Orders' },
+    { to: '/settings', label: 'Settings' },
+    { to: '/profile', label: 'Profile' },
+  ];
+  render(<Navigation items={items} />);
+
+  items.forEach(({ to, label }) => {
+    const link = screen.getByRole('link', { name: label });
+    expect(link).toHaveAttribute('href', to);
+  });
+});
+```
+
+The first test proves the component works with one item. The second test proves something stronger: whatever items you provide, each becomes a navigable link. Add a fourth item, a fifth, change the labels. The invariant holds.
+
+This doesn't mean property-based testing frameworks (though those exist and are valuable). It means thinking in terms of properties when you write any test. Ask: "What should always be true about this code?" Not: "What happens with this particular input?"
+
+Properties survive refactoring because they describe fundamental behaviour, not incidental outcomes.
+
+## The Refactoring Test
+
+Here's a useful heuristic: before committing a test, ask yourself whether it would survive a complete rewrite.
+
+Imagine you handed the module's specification to a developer who'd never seen your code. They implement it from scratch, differently than you did. Different internal structure, different helper functions, different state management. But the same external behaviour.
+
+Would your tests pass?
+
+If yes, you've tested the contract. If no, you've tested the implementation. Go back and fix the test.
+
+This isn't hypothetical. When working with AI agents, "complete rewrites" happen regularly. The agent suggests a different approach. You accept it. Everything should still work. Your tests should prove it.
+
+## What Not to Test
+
+The flip side of knowing what to test is knowing what to skip.
+
+Simple, obvious code doesn't need tests. A component that renders a string as a heading doesn't need a test proving it renders a heading. A utility that concatenates paths doesn't need a test for every possible path combination. The implementation is the specification.
+
+Test complex logic. Test edge cases. Test error handling. Test anything where a bug would be non-obvious or expensive to find later.
+
+Don't test that React renders React components. Don't test that TypeScript types are correct (the compiler does that). Don't test obvious transformations. Your test suite isn't a proof of correctness; it's a net that catches the bugs that matter.
+
+This restraint has a benefit beyond saving time: a smaller, focused test suite is easier to maintain. When every test has a clear purpose, you don't end up with a sprawling collection of half-remembered assertions that may or may not still matter.
+
+## The Integration Insight
+
+There's a specific pattern that works well in this new environment: integration-style unit tests.
+
+Traditional unit testing isolates each function, each component, each module. You test them in complete isolation, mocking all dependencies. This creates many small tests, each coupled to implementation details.
+
+Integration-style unit tests take a different approach. Test the assembled component, not its parts. Render the whole navigation menu, not each navigation item separately. Let the real code run, verify the final output behaves correctly.
+
+```typescript
+// Isolated unit tests — many small tests, implementation-coupled
+describe('NavItem', () => { /* ... */ });
+describe('NavList', () => { /* ... */ });
+describe('NavHeader', () => { /* ... */ });
+
+// Integration-style unit test — one robust test
+test('AccountNavigation renders complete navigation', () => {
+  render(<AccountNavigation user={mockUser} />);
+
+  // Test outcomes, not intermediate steps
+  expect(screen.getByRole('navigation')).toBeInTheDocument();
+  expect(screen.getByText(/hello, test user/i)).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /orders/i })).toHaveAttribute('href', '/orders');
+  expect(screen.getByRole('link', { name: /settings/i })).toHaveAttribute('href', '/settings');
+});
+```
+
+This approach tests the same behaviour with fewer, more robust tests. It also mirrors how users experience your code: as assembled wholes, not isolated fragments.
+
+You still need actual integration tests and end-to-end tests for cross-system behaviour. But for component testing, the integration mindset (test the assembled thing, not the pieces) serves you well.
+
+## The Speed Paradox
+
+Here's the paradox: tests that enable fast iteration appear to slow down initial development.
+
+Writing contract-based tests requires more thought upfront. You have to identify what actually matters, what the real invariants are. You can't just spy on every function and call it coverage.
+
+But this investment pays compound returns. Every time you refactor without fixing tests, you've earned back that initial investment. Every time an agent rewrites a module and the tests still pass, you've proven the approach works.
+
+The alternative, brittle tests that break on every change, feels faster initially. You're "done" with tests sooner. But then you spend the rest of the project fighting them. Each change requires test changes. Each refactor requires test refactoring. The tests become a drag coefficient on improvement.
+
+Google learned this at scale: "A brittle test is one that fails in the face of an unrelated change to production code that does not introduce any real bugs." At their scale, even a small percentage of brittle tests wastes tremendous engineering time. At any scale, brittle tests erode trust in the test suite itself.
+
+Fast tests enable fast development. Not fast to write. Fast to live with.
+
+## A Philosophy for Flux
+
+Working with AI agents fundamentally changes the economics of code change. When change is cheap, stability must come from somewhere else. Tests become that source of stability. But only if they're designed for it.
+
+The philosophy that emerges is simple to state and takes practice to apply:
+
+**Test what the code does, not how it does it.**
+
+The code inside can change. The contract remains stable. Tests verify the contract. Everything else is free to evolve.
+
+This isn't about testing less. It's about testing differently. Tests become specifications, not surveillance. They define what matters, not document what exists.
+
+When code is in constant flux, tests are your anchor. Make sure they're anchored to the right things.

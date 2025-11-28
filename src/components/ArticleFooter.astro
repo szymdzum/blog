@@ -1,0 +1,29 @@
+---
+import { siteConfig } from "@/site-config";
+
+const { github, linkedin } = siteConfig.socials;
+---
+
+<footer class="article-footer">
+  <p>
+    Thoughts? Disagreements? Hit me up on <a href={github.url}>{github.name}</a> or <a href={linkedin.url}>{linkedin.name}</a>.
+  </p>
+</footer>
+
+<style>
+  .article-footer {
+    margin-top: var(--space-2xl);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .article-footer a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .article-footer a:hover {
+    text-decoration: underline;
+  }
+</style>

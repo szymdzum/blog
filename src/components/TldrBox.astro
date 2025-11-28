@@ -1,0 +1,48 @@
+---
+interface Props {
+  title?: string;
+}
+
+const { title = "TL;DR" } = Astro.props;
+---
+
+<aside class="tldr-box">
+  <span class="tldr-label">{title}</span>
+  <div class="tldr-content">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .tldr-box {
+    background: var(--color-surface);
+    border-left: 3px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    padding: var(--space-md) var(--space-lg);
+    margin-bottom: var(--space-xl);
+  }
+
+  .tldr-label {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-primary);
+    margin-bottom: var(--space-xs);
+  }
+
+  .tldr-content {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .tldr-content :global(p) {
+    margin: 0;
+  }
+
+  .tldr-content :global(p + p) {
+    margin-top: var(--space-xs);
+  }
+</style>

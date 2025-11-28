@@ -1,0 +1,90 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+
+const tocHeadings = headings.filter((h) => h.depth === 2);
+---
+
+{tocHeadings.length > 0 && (
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-inner">
+      <span class="toc-label">On this page</span>
+      <ul>
+        {tocHeadings.map((heading) => (
+          <li>
+            <a href={`#${heading.slug}`}>{heading.text.replace(/^#\s*/, '')}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </nav>
+)}
+
+<style>
+  .toc {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translateX(calc(100% + var(--space-xl)));
+    width: max-content;
+    height: 100%;
+    font-size: var(--text-xs);
+  }
+
+  .toc-inner {
+    position: sticky;
+    top: var(--space-xl);
+  }
+
+  .toc-label {
+    display: block;
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+    font-size: 10px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    padding: 2px 0;
+    border-left: 2px solid var(--color-border);
+    padding-left: var(--space-sm);
+  }
+
+  li:hover {
+    border-left-color: var(--color-primary);
+  }
+
+  a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    line-height: var(--line-height-snug);
+    display: block;
+  }
+
+  a:hover {
+    color: var(--color-primary);
+  }
+
+  @media (max-width: 1400px) {
+    .toc {
+      display: none;
+    }
+  }
+</style>
