@@ -192,6 +192,36 @@ Don't test that React renders React components. Don't test that TypeScript types
 
 This restraint has a benefit beyond saving time: a smaller, focused test suite is easier to maintain. When every test has a clear purpose, you don't end up with a sprawling collection of half-remembered assertions that may or may not still matter.
 
+## The Coverage Trap
+
+Coverage metrics are seductive. A number goes up. Green bars fill in. It feels like progress.
+
+But coverage measures execution, not intent. A test that executes a line of code isn't necessarily testing that the line does what it should. You can achieve 100% coverage with tests that assert nothing meaningful.
+
+Worse, coverage as a target incentivises exactly the wrong kind of tests. Need to hit 80%? Write tests that touch every branch, spy on every function, assert on every intermediate value. You'll hit your number. You'll also create a test suite that breaks whenever anyone improves the code.
+
+```typescript
+// Written for coverage, not for value
+test('increases coverage', () => {
+  const result = processOrder(mockOrder);
+  expect(processOrder).toHaveBeenCalled(); // So what?
+  expect(result).toBeDefined(); // Still nothing
+});
+
+// Written for behaviour
+test('completed orders update inventory', () => {
+  const order = createOrder({ items: [{ sku: 'ABC', quantity: 2 }] });
+  processOrder(order);
+  expect(getInventory('ABC')).toBe(initialStock - 2);
+});
+```
+
+The first test executes the function. The second test verifies the business rule. Only one of them catches bugs.
+
+Coverage can be a useful signal that you've forgotten something. If a critical path shows 0% coverage, that's worth investigating. But as a quality metric, it's actively harmful. It rewards quantity over purpose and creates pressure to write tests that exist only to satisfy the metric.
+
+The real question isn't "how much code did my tests execute?" It's "would my tests catch a bug that matters?"
+
 ## The Integration Insight
 
 There's a specific pattern that works well in this new environment: integration-style unit tests.
