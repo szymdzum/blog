@@ -129,13 +129,15 @@ const readingTime = estimateReadingTime(post.body);
     font-weight: var(--font-weight-medium);
   }
 
+  @media (max-width: 768px) {
+    .published-label {
+      display: none;
+    }
+  }
+
   @media (max-width: 480px) {
     .post-header h1 {
       font-size: var(--text-xl);
-    }
-
-    .published-label {
-      display: none;
     }
   }
 </style>
