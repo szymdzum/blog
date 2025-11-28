@@ -31,6 +31,18 @@ const themeUrl = import.meta.env.DEV
     crossorigin="anonymous"
     async
   ></script>
+  <noscript>
+    <p class="noscript-fallback">
+      Comments require JavaScript. View the discussion on{" "}
+      <a
+        href={`https://github.com/${siteConfig.giscus.repo}/discussions`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub Discussions
+      </a>.
+    </p>
+  </noscript>
 </div>
 
 <style>
@@ -38,5 +50,14 @@ const themeUrl = import.meta.env.DEV
     margin-top: var(--space-3xl);
     padding-top: var(--space-2xl);
     border-top: var(--border-width) solid var(--color-border);
+  }
+
+  .noscript-fallback {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .noscript-fallback a {
+    color: var(--color-primary);
   }
 </style>

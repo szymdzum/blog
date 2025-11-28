@@ -5,7 +5,7 @@ import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import { externalLinks } from "./src/utils/external-links.ts";
+import { externalLinks } from "./src/utils/links.ts";
 
 // https://astro.build/config
 export default defineConfig({

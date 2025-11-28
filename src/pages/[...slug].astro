@@ -9,30 +9,25 @@ import ArticleMeta from "@components/ArticleMeta.astro";
 import ArticleFooter from "@components/ArticleFooter.astro";
 import FurtherReading from "@components/FurtherReading.astro";
 import TableOfContents from "@components/TableOfContents.astro";
-import { type CollectionEntry, getCollection, render } from "astro:content";
+import { getCollection, render } from "astro:content";
+import { estimateReadingTime, type BlogPost } from "@utils/posts";
 
 export const prerender = true;
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
-  return posts.map((post: CollectionEntry<"blog">) => ({
+  return posts.map((post: BlogPost) => ({
     params: { slug: post.slug },
     props: post,
   }));
 }
 
-type Props = CollectionEntry<"blog">;
+type Props = BlogPost;
 
 const post = Astro.props;
 const { Content, headings } = await render(post);
 
 const { title, description, pubDate, updatedDate, category, tags, author, heroImage, externalLinks } = post.data;
-
-function estimateReadingTime(content: string): number {
-  const wordsPerMinute = 200;
-  const wordCount = content.trim().split(/\s+/).length;
-  return Math.ceil(wordCount / wordsPerMinute);
-}
 
 const readingTime = estimateReadingTime(post.body);
 ---

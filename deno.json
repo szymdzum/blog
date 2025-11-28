@@ -33,7 +33,8 @@
       "dist/",
       "node_modules/",
       ".astro/",
-      "coverage/"
+      "coverage/",
+      "src/utils/toc.ts"
     ],
     "rules": {
       "tags": [

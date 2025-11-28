@@ -246,21 +246,11 @@
   font-weight: var(--font-weight-normal);
 }
 
-.prose h1,
-.prose h2,
-.prose h3,
-.prose h4,
-.prose h5,
-.prose h6 {
+.prose :where(h1, h2, h3, h4, h5, h6) {
   position: relative;
 }
 
-.prose h1:hover .heading-anchor,
-.prose h2:hover .heading-anchor,
-.prose h3:hover .heading-anchor,
-.prose h4:hover .heading-anchor,
-.prose h5:hover .heading-anchor,
-.prose h6:hover .heading-anchor,
+.prose :where(h1, h2, h3, h4, h5, h6):hover .heading-anchor,
 .prose .heading-anchor:focus {
   opacity: 1;
 }

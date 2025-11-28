@@ -95,37 +95,4 @@ const tocHeadings = headings.filter((h) => h.depth === 2);
   }
 </style>
 
-<script is:inline>
-  const headings = Array.from(document.querySelectorAll('article h2[id]'));
-  const tocLinks = document.querySelectorAll('.toc a');
-
-  function setActive(id) {
-    tocLinks.forEach((a) => {
-      a.classList.remove('active');
-      a.removeAttribute('aria-current');
-    });
-    const link = document.querySelector(`.toc a[href="#${id}"]`);
-    if (link) {
-      link.classList.add('active');
-      link.setAttribute('aria-current', 'true');
-    }
-  }
-
-  function updateActiveHeading() {
-    const scrollY = window.scrollY;
-    let current = headings[0]?.id;
-
-    for (const heading of headings) {
-      if (heading.offsetTop <= scrollY + 100) {
-        current = heading.id;
-      } else {
-        break;
-      }
-    }
-
-    if (current) setActive(current);
-  }
-
-  window.addEventListener('scroll', updateActiveHeading, { passive: true });
-  updateActiveHeading();
-</script>
+<script src="../utils/toc.ts"></script>

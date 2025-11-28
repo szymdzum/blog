@@ -16,7 +16,6 @@ const blog = defineCollection({
     author: z.string().default("Szymon Dzumak"),
     showToc: z.boolean().default(false),
     featured: z.boolean().default(false),
-    minutesToRead: z.number().optional(),
     relatedPosts: z.array(z.string()).optional(),
     externalLinks: z.array(z.object({
       title: z.string(),

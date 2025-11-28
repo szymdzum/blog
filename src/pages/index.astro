@@ -3,13 +3,9 @@ import Hero from "@components/Hero.astro";
 import BlogPostCard from "@components/BlogPostCard.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import SchemaOrg from "@components/SchemaOrg.astro";
-import type { CollectionEntry } from "astro:content";
-import { getCollection } from "astro:content";
+import { getAllPosts } from "@utils/posts";
 
-const posts = (await getCollection("blog")).sort(
-  (a: CollectionEntry<"blog">, b: CollectionEntry<"blog">) =>
-    b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const posts = await getAllPosts();
 ---
 
 <BaseLayout
@@ -22,7 +18,7 @@ const posts = (await getCollection("blog")).sort(
   <section class="posts">
     <h2><span class="prompt">Recent Posts</span></h2>
     <div class="posts-list">
-      {posts.map((post: CollectionEntry<"blog">) => (
+      {posts.map((post) => (
         <BlogPostCard post={post} />
       ))}
     </div>
