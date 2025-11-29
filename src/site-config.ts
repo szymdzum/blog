@@ -3,8 +3,8 @@ export const siteConfig = {
   // Site details
   name: "The Null Hypothesis",
   url: "https://kumak.dev",
-  description: "A blog about technology, programming, and more",
-  tagline: "Where decade of code meet moments of clarity.",
+  description: "Front-end, LLM tooling, and what actually works.",
+  tagline: "Front-end, LLM tooling, and what actually works.",
   image: "/social-image.jpg",
   // Author/owner info
   author: "Kumak",

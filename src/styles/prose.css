@@ -26,6 +26,7 @@
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
   word-spacing: var(--word-spacing-tight);
+  text-wrap: balance;
   margin-top: var(--rhythm-double); /* ~3.2em */
   margin-bottom: var(--rhythm-half);
   letter-spacing: var(--letter-spacing-tight);

@@ -1,4 +1,6 @@
 ---
+import { siteConfig } from "@/site-config";
+
 const loopCount = 28;
 const segments = 120;
 const majorRadius = 115;
@@ -36,8 +38,8 @@ const projectPoint = (theta: number, phi: number) => {
 // Generate projected torus loops: phi sweeps around the ring, theta walks each loop.
 ---
 
-<section class="hero">
-  <svg class="torus" viewBox="90 40 330 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<section>
+  <svg viewBox="90 55 330 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <g class="torus-loops">
       {Array.from({ length: loopCount }, (_, index) => {
         const phi = -Math.PI / 2 + (index / (loopCount - 1)) * Math.PI;
@@ -65,16 +67,27 @@ const projectPoint = (theta: number, phi: number) => {
       })}
     </g>
   </svg>
+  <h1>{siteConfig.tagline}</h1>
 </section>
 
 <style>
-  .hero {
+  section {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    text-align: center;
   }
 
-  .torus {
+  h1 {
+    font-family: var(--font-family-display);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-muted);
+    letter-spacing: var(--letter-spacing-tight);
+    margin-top: 0;
+  }
+
+  svg {
     width: 100%;
     height: auto;
   }
