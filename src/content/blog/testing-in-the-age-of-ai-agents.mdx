@@ -15,6 +15,7 @@ keywords: [
 author: "Szymon Dzumak"
 showToc: true
 featured: false
+draft: true
 externalLinks:
   - title: "Software Engineering at Google: Unit Testing"
     url: "https://abseil.io/resources/swe-book/html/ch12.html"
@@ -27,18 +28,32 @@ externalLinks:
 import TldrBox from '@components/TldrBox.astro';
 
 <TldrBox>
-AI agents make code change cheap. But tests aren't about cost. They're your ground truth for correctness.
-
-Test what the code *does*, not how it does it. Contract-based tests define what "correct" means. Implementation-coupled tests lose that definition every time they change.
+AI agents make code change cheap. But tests aren't about cost. They're your ground truth for correctness. Test what the code *does*, not how it does it. Contract-based tests define what "correct" means. Implementation-coupled tests lose that definition every time they change.
 </TldrBox>
 
-AI agents don't just write code faster. They make rewriting trivial. Your codebase becomes fluid, reshaping itself as fast as you can describe what you want.
+AI agents don't just write code faster. They make rewriting trivial. Your codebase becomes fluid, reshaping itself as fast as you can describe what you want. But when everything is in flux, how do you know the features still work? How do you stay free to change internals without breaking the features?
 
-But when everything is in flux, how do you know the features still work? How do you stay free to change internals without breaking what users depend on? Something needs to hold the shape while everything inside it moves.
+Something needs to hold the shape while everything inside it moves. After all, only developers care about the internalls deeply, rest really expect a working feature.
 
-That something is your tests. Not tests that document how the code works today, but tests that define what it must always do. When internals shift constantly, tests become your anchor.
+That something could be your tests. Not tests that document how the code works today, but tests that define what it must always do. When internals are allowed and expected to shift constantly, tests become your anchor.
 
-## The Wrong Friction
+
+## What Tests Are Actually For
+
+
+The obvious purpose of tests is "catching bugs." But that's incomplete. A test that breaks when behaviour changes is valuable. A test that breaks when implementation changes, but behaviour stays the same, it actively punishe changes.
+
+Tests are your definition of correctness. They're the fixed point against which all change is measured. Good tests encode intent. They say:
+
+> "This is the contract. This is what matters. Everything else is negotiable."
+
+[Kent Beck](https://tidyfirst.substack.com/p/canon-tdd) captured this distinction precisely: tests should be "sensitive to behavior changes and insensitive to structure changes." A test that responds to behaviour is doing its job. A test that responds to structure is doing the opposite of its job.
+
+When you test that a navigation component renders a link to `/orders`, you're encoding intent: users should be able to navigate to their orders. When you test that the component calls a specific internal styling function with specific parameters, you're encoding an implementation detail that could change tomorrow.
+
+The first test survives refactoring. The second test fights it. But more importantly: the first test can verify that a refactor preserved behaviour. The second test can only verify that someone updated the test to match whatever the code does now.
+
+## The Anchor
 
 If your tests are tightly coupled to implementation details, you've created friction in the wrong place. The agent rewrites your component, and now you're fixing test expectations that spy on internal functions and assert on DOM structures that no longer exist.
 
@@ -58,24 +73,6 @@ The tests haven't caught a bug. The behaviour is identical. You're just paying a
 But here's the deeper question: if AI can rewrite code cheaply, why can't it rewrite tests cheaply too? Why does test change matter if the agent can fix them in seconds?
 
 The answer isn't about cost. It's about what tests fundamentally represent.
-
-## What Tests Are Actually For
-
-Tests are your definition of correctness. They're the fixed point against which all change is measured.
-
-When a test passes, it means the code meets the specification. When a test fails, either the code is wrong or the specification changed. This only works if the specification itself is stable. If tests change every time code changes, you've lost your reference point. You're measuring with a ruler that stretches.
-
-The obvious purpose of tests is "catching bugs." But that's incomplete. A test that breaks when behaviour changes is valuable. A test that breaks when implementation changes, but behaviour stays the same, is worse than useless. It actively punishes improvement. And when AI "fixes" that test, the failure's signal vanishes. Did the behaviour actually stay the same? The test no longer tells you.
-
-Good tests encode intent. They say:
-
-> "This is the contract. This is what matters. Everything else is negotiable."
-
-[Kent Beck](https://tidyfirst.substack.com/p/canon-tdd) captured this distinction precisely: tests should be "sensitive to behavior changes and insensitive to structure changes." A test that responds to behaviour is doing its job. A test that responds to structure is doing the opposite of its job.
-
-When you test that a navigation component renders a link to `/orders`, you're encoding intent: users should be able to navigate to their orders. When you test that the component calls a specific internal styling function with specific parameters, you're encoding an implementation detail that could change tomorrow.
-
-The first test survives refactoring. The second test fights it. But more importantly: the first test can verify that a refactor preserved behaviour. The second test can only verify that someone updated the test to match whatever the code does now.
 
 ## The Contract Principle
 
