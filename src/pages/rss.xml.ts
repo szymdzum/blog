@@ -6,12 +6,19 @@ import { getAllPosts } from "@utils/posts";
 
 export const GET: APIRoute = async (context) => {
   const posts = await getAllPosts();
+
   return rss({
     title: siteConfig.name,
     description: siteConfig.description,
     site: context.site!,
+    stylesheet: "/rss-styles.xsl",
+    customData: `<language>en</language>`,
     items: posts.map((post) => ({
-      ...post.data,
+      title: post.data.title,
+      description: post.data.description,
+      pubDate: post.data.pubDate,
+      author: siteConfig.author,
+      categories: [post.data.category],
       link: formatUrl(post.slug),
     })),
   });
