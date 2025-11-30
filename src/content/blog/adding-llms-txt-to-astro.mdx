@@ -47,6 +47,16 @@ Three endpoints:
 
 The index is lightweight. Agents fetch it first, see what's available, then request specific posts or the full dump depending on their needs.
 
+## Prerequisites
+
+The implementation assumes you have:
+
+- **`siteConfig`** - Object with `name`, `description`, `url`, `author` properties
+- **`getAllPosts()`** - Function returning your content collection posts
+- **`BlogPost`** - Type from Astro's content collections with `slug`, `body`, and `data` (title, description, pubDate, category)
+
+These are project-specific. The [complete gist](https://gist.github.com/szymdzum/a6db6ff5feb0c566cbd852e10c0ab0af) shows the full implementation with all type definitions.
+
 ## The Core Builder
 
 The entire implementation shares one document builder. It takes sections, flattens them, normalizes whitespace, and returns a text response:
