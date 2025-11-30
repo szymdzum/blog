@@ -19,7 +19,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2);
   <nav data-toc aria-label="Table of contents">
     <div>
       <span>On this page</span>
-      <ul>
+      <ul data-toc-list>
         <li>
           <a href="#top">{title}</a>
         </li>
@@ -63,6 +63,22 @@ const tocHeadings = headings.filter((h) => h.depth === 2);
     margin: 0;
   }
 
+  ul {
+    position: relative;
+  }
+
+  ul::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--border-width-thick);
+    height: var(--toc-progress, 0%);
+    background: var(--color-primary);
+    z-index: 1;
+    transition: height 0.15s ease-out;
+  }
+
   li {
     padding: var(--space-3xs) 0;
     border-left: var(--border-width-thick) solid var(--color-border);
@@ -71,6 +87,10 @@ const tocHeadings = headings.filter((h) => h.depth === 2);
 
   li:hover {
     border-left-color: var(--color-primary);
+  }
+
+  li[data-read] {
+    border-left-color: transparent;
   }
 
   a {
