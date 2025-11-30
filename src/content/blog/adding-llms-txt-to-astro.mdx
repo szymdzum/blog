@@ -1,6 +1,6 @@
 ---
 title: "Adding llms.txt to Your Astro Blog"
-description: "How to implement the llms.txt standard in Astro without dependencies. Three endpoints, 140 lines of TypeScript, and your content becomes agent-accessible."
+description: "How to implement the llms.txt standard in Astro without dependencies. Three endpoints, ~150 lines of TypeScript, and your content becomes agent-accessible."
 pubDate: 2025-11-30
 category: "tutorial"
 tags: ["astro", "llms-txt", "ai", "developer-tools"]
@@ -28,7 +28,7 @@ externalLinks:
 import TldrBox from '@components/TldrBox.astro';
 
 <TldrBox>
-llms.txt is a proposed standard for making websites readable by AI agents. For an Astro blog, you need three endpoints: an index (`/llms.txt`), full content (`/llms-full.txt`), and per-post files (`/llms/[slug].txt`). Skip the npm packages. The implementation is ~140 lines of TypeScript with zero dependencies.
+llms.txt is a proposed standard for making websites readable by AI agents. For an Astro blog, you need three endpoints: an index (`/llms.txt`), full content (`/llms-full.txt`), and per-post files (`/llms/[slug].txt`). Skip the npm packages. The implementation is ~150 lines of TypeScript with zero dependencies.
 </TldrBox>
 
 The [llms.txt specification](https://llmstxt.org/) proposes a standard location for LLM-readable content, similar to `robots.txt` for crawlers or `sitemap.xml` for search engines. The idea: provide a clean, structured text file that AI agents can fetch to understand your site's content without parsing HTML.
@@ -45,49 +45,51 @@ Three endpoints:
 
 The index is lightweight. Agents fetch it first, see what's available, then request specific posts or the full dump depending on their needs.
 
-## The Utility Functions
+## The Core Builder
 
-Start with a utility file that handles the text generation. This keeps the endpoint files clean:
+The entire implementation shares one document builder. It takes sections, flattens them, normalizes whitespace, and returns a text response:
 
 ```typescript
 // src/utils/llms.ts
 
-interface LlmsItem {
-  title: string;
-  description: string;
-  link: string;
-}
+function doc(...sections: (string | string[])[]): Response {
+  const content = sections
+    .flat()
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 
-interface LlmsFullItem extends LlmsItem {
-  pubDate: Date;
-  category: string;
-  body: string;
-}
-
-interface LlmsTxtConfig {
-  name: string;
-  description: string;
-  site: string;
-  items: LlmsItem[];
-  optional?: LlmsItem[];
-}
-
-interface LlmsFullTxtConfig {
-  name: string;
-  description: string;
-  author: string;
-  site: string;
-  items: LlmsFullItem[];
+  return new Response(content + "\n", {
+    headers: { "Content-Type": "text/plain; charset=utf-8" },
+  });
 }
 ```
 
-The response helper ensures consistent headers:
+Every endpoint uses this. No inconsistent joining patterns.
+
+## Shared Helpers
+
+Three small functions handle the repeating patterns:
 
 ```typescript
-function textResponse(content: string): Response {
-  return new Response(content, {
-    headers: { "Content-Type": "text/plain; charset=utf-8" },
-  });
+function formatDate(date: Date): string {
+  return date.toISOString().split("T")[0];
+}
+
+function header(name: string, description: string): string[] {
+  return [`# ${name}`, "", `> ${description}`];
+}
+
+function linkList(title: string, items: LlmsItem[], site: string): string[] {
+  return [
+    "",
+    `## ${title}`,
+    ...items.map((item) => `- [${item.title}](${site}${item.link}): ${item.description}`),
+  ];
+}
+
+function postMeta(site: string, link: string, pubDate: Date, category: string): string[] {
+  return [`URL: ${site}${link}`, `Published: ${formatDate(pubDate)}`, `Category: ${category}`];
 }
 ```
 
@@ -96,82 +98,40 @@ function textResponse(content: string): Response {
 If you use MDX, your post bodies contain import statements and JSX components. Agents don't need these:
 
 ```typescript
-const MDX_PATTERNS = {
-  imports: /^import\s+.+from\s+['"].+['"];?\s*$/gm,
-  jsxBlocks: /<[A-Z][a-zA-Z]*[^>]*>[\s\S]*?<\/[A-Z][a-zA-Z]*>/g,
-  jsxSelfClosing: /<[A-Z][a-zA-Z]*[^>]*\/>/g,
-} as const;
+const MDX_PATTERNS = [
+  /^import\s+.+from\s+['"].+['"];?\s*$/gm,
+  /<[A-Z][a-zA-Z]*[^>]*>[\s\S]*?<\/[A-Z][a-zA-Z]*>/g,
+  /<[A-Z][a-zA-Z]*[^>]*\/>/g,
+] as const;
 
-function stripMdxSyntax(content: string): string {
-  return Object.values(MDX_PATTERNS)
-    .reduce((text, pattern) => text.replace(pattern, ""), content)
-    .trim();
+function stripMdx(content: string): string {
+  return MDX_PATTERNS.reduce((text, pattern) => text.replace(pattern, ""), content).trim();
 }
 ```
 
 This removes `import` lines and any PascalCase components (the convention for JSX). Standard markdown passes through unchanged.
 
-## The Index Generator
+## The Three Generators
 
-The main `llms.txt` follows a simple format: title, description, then sections with links:
+With the helpers in place, each generator is minimal:
 
 ```typescript
-function formatLink(item: LlmsItem, site: string): string {
-  return `- [${item.title}](${site}${item.link}): ${item.description}`;
-}
-
 export function llmsTxt(config: LlmsTxtConfig): Response {
-  const header = [`# ${config.name}`, `> ${config.description}`];
-  const posts = [
-    "## Posts",
-    ...config.items.map((item) => formatLink(item, config.site)),
+  const sections = [
+    header(config.name, config.description),
+    linkList("Posts", config.items, config.site),
   ];
-
-  const sections = [header, posts];
 
   if (config.optional?.length) {
-    const optional = [
-      "## Optional",
-      ...config.optional.map((item) => formatLink(item, config.site)),
-    ];
-    sections.push(optional);
+    sections.push(linkList("Optional", config.optional, config.site));
   }
 
-  const content = sections.map((lines) => lines.join("\n")).join("\n\n");
-  return textResponse(content + "\n");
-}
-```
-
-## The Full Content Generator
-
-For agents that want everything at once:
-
-```typescript
-function formatDate(date: Date): string {
-  return date.toISOString().split("T")[0];
-}
-
-function formatPostSection(item: LlmsFullItem, site: string): string[] {
-  return [
-    `## ${item.title}`,
-    "",
-    `URL: ${site}${item.link}`,
-    `Published: ${formatDate(item.pubDate)}`,
-    `Category: ${item.category}`,
-    "",
-    `> ${item.description}`,
-    "",
-    stripMdxSyntax(item.body),
-    "",
-    "---",
-  ];
+  return doc(...sections);
 }
 
 export function llmsFullTxt(config: LlmsFullTxtConfig): Response {
-  const header = [
-    `# ${config.name}`,
-    "",
-    `> ${config.description}`,
+  const head = [
+    ...header(config.name, config.description),
     "",
     `Author: ${config.author}`,
     `Site: ${config.site}`,
@@ -179,11 +139,35 @@ export function llmsFullTxt(config: LlmsFullTxtConfig): Response {
     "---",
   ];
 
-  const posts = config.items.flatMap((item) =>
-    formatPostSection(item, config.site)
-  );
+  const posts = config.items.flatMap((item) => [
+    "",
+    `## ${item.title}`,
+    "",
+    ...postMeta(config.site, item.link, item.pubDate, item.category),
+    "",
+    `> ${item.description}`,
+    "",
+    stripMdx(item.body),
+    "",
+    "---",
+  ]);
 
-  return textResponse([...header, "", ...posts, ""].join("\n"));
+  return doc(head, posts);
+}
+
+export function llmsPost(config: LlmsPostConfig): Response {
+  const { post, site, link } = config;
+  const { title, description, pubDate, category } = post.data;
+
+  return doc(
+    `# ${title}`,
+    "",
+    `> ${description}`,
+    "",
+    ...postMeta(site, link, pubDate, category),
+    "",
+    stripMdx(post.body ?? ""),
+  );
 }
 ```
 
@@ -272,6 +256,14 @@ Agents need to find your llms.txt. Add a link tag to your HTML head, similar to 
 
 This isn't part of the spec, but it follows web conventions. The spec itself relies on the well-known path (`/llms.txt`) and community directories like [llmstxt.site](https://llmstxt.site).
 
+## Limitations
+
+This approach works for content collections with markdown or MDX bodies. The implementation reads `post.body` directly, which is raw text.
+
+For component-based pages (React, Vue, Svelte, or plain `.astro` files), there's no markdown body to extract. You'd need a different strategy: render to HTML and strip tags (lossy), maintain separate content files (duplicate effort), or use a headless CMS where content exists independently of components.
+
+For most blogs, content collections are the right choice anyway. If your site is component-heavy, consider whether those pages even belong in llms.txt.
+
 ## Why Not Use a Library?
 
 There are Astro integrations for llms.txt. They auto-generate from all pages at build time. This sounds convenient, but:
@@ -281,7 +273,7 @@ There are Astro integrations for llms.txt. They auto-generate from all pages at 
 3. No control over the output format
 4. Another dependency to maintain
 
-The implementation above is ~140 lines of TypeScript. You control exactly what's included. You can add per-post endpoints. You can customise the format. And you understand every line.
+The implementation above is ~150 lines of TypeScript. You control exactly what's included. You can add per-post endpoints. You can customise the format. And you understand every line.
 
 For something this simple, the DIY approach wins.
 

@@ -28,74 +28,70 @@ interface LlmsFullTxtConfig {
   items: LlmsFullItem[];
 }
 
-const MDX_PATTERNS = {
-  imports: /^import\s+.+from\s+['"].+['"];?\s*$/gm,
-  jsxBlocks: /<[A-Z][a-zA-Z]*[^>]*>[\s\S]*?<\/[A-Z][a-zA-Z]*>/g,
-  jsxSelfClosing: /<[A-Z][a-zA-Z]*[^>]*\/>/g,
-} as const;
-
-function stripMdxSyntax(content: string): string {
-  return Object.values(MDX_PATTERNS)
-    .reduce((text, pattern) => text.replace(pattern, ""), content)
-    .trim();
+interface LlmsPostConfig {
+  post: BlogPost;
+  site: string;
+  link: string;
 }
 
-function textResponse(content: string): Response {
-  return new Response(content, {
-    headers: { "Content-Type": "text/plain; charset=utf-8" },
-  });
+const MDX_PATTERNS = [
+  /^import\s+.+from\s+['"].+['"];?\s*$/gm,
+  /<[A-Z][a-zA-Z]*[^>]*>[\s\S]*?<\/[A-Z][a-zA-Z]*>/g,
+  /<[A-Z][a-zA-Z]*[^>]*\/>/g,
+] as const;
+
+function stripMdx(content: string): string {
+  return MDX_PATTERNS.reduce((text, pattern) => text.replace(pattern, ""), content).trim();
 }
 
 function formatDate(date: Date): string {
   return date.toISOString().split("T")[0];
 }
 
-function formatLink(item: LlmsItem, site: string): string {
-  return `- [${item.title}](${site}${item.link}): ${item.description}`;
+function doc(...sections: (string | string[])[]): Response {
+  const content = sections
+    .flat()
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  return new Response(content + "\n", {
+    headers: { "Content-Type": "text/plain; charset=utf-8" },
+  });
 }
 
-function buildDocument(sections: string[][]): string {
-  return sections.map((lines) => lines.join("\n")).join("\n\n");
+function header(name: string, description: string): string[] {
+  return [`# ${name}`, "", `> ${description}`];
 }
 
-export function llmsTxt(config: LlmsTxtConfig): Response {
-  const header = [`# ${config.name}`, `> ${config.description}`];
-  const posts = ["## Posts", ...config.items.map((item) => formatLink(item, config.site))];
-
-  const sections = [header, posts];
-
-  if (config.optional?.length) {
-    const optional = [
-      "## Optional",
-      ...config.optional.map((item) => formatLink(item, config.site)),
-    ];
-    sections.push(optional);
-  }
-
-  return textResponse(buildDocument(sections) + "\n");
-}
-
-function formatPostSection(item: LlmsFullItem, site: string): string[] {
+function linkList(title: string, items: LlmsItem[], site: string): string[] {
   return [
-    `## ${item.title}`,
     "",
-    `URL: ${site}${item.link}`,
-    `Published: ${formatDate(item.pubDate)}`,
-    `Category: ${item.category}`,
-    "",
-    `> ${item.description}`,
-    "",
-    stripMdxSyntax(item.body),
-    "",
-    "---",
+    `## ${title}`,
+    ...items.map((item) => `- [${item.title}](${site}${item.link}): ${item.description}`),
   ];
 }
 
+function postMeta(site: string, link: string, pubDate: Date, category: string): string[] {
+  return [`URL: ${site}${link}`, `Published: ${formatDate(pubDate)}`, `Category: ${category}`];
+}
+
+export function llmsTxt(config: LlmsTxtConfig): Response {
+  const sections = [
+    header(config.name, config.description),
+    linkList("Posts", config.items, config.site),
+  ];
+
+  if (config.optional?.length) {
+    sections.push(linkList("Optional", config.optional, config.site));
+  }
+
+  return doc(...sections);
+}
+
 export function llmsFullTxt(config: LlmsFullTxtConfig): Response {
-  const header = [
-    `# ${config.name}`,
-    "",
-    `> ${config.description}`,
+  const head = [
+    ...header(config.name, config.description),
     "",
     `Author: ${config.author}`,
     `Site: ${config.site}`,
@@ -103,35 +99,35 @@ export function llmsFullTxt(config: LlmsFullTxtConfig): Response {
     "---",
   ];
 
-  const posts = config.items.flatMap((item) => formatPostSection(item, config.site));
+  const posts = config.items.flatMap((item) => [
+    "",
+    `## ${item.title}`,
+    "",
+    ...postMeta(config.site, item.link, item.pubDate, item.category),
+    "",
+    `> ${item.description}`,
+    "",
+    stripMdx(item.body),
+    "",
+    "---",
+  ]);
 
-  return textResponse([...header, "", ...posts, ""].join("\n"));
-}
-
-interface LlmsPostConfig {
-  post: BlogPost;
-  site: string;
-  link: string;
+  return doc(head, posts);
 }
 
 export function llmsPost(config: LlmsPostConfig): Response {
   const { post, site, link } = config;
   const { title, description, pubDate, category } = post.data;
 
-  const lines = [
+  return doc(
     `# ${title}`,
     "",
     `> ${description}`,
     "",
-    `URL: ${site}${link}`,
-    `Published: ${formatDate(pubDate)}`,
-    `Category: ${category}`,
+    ...postMeta(site, link, pubDate, category),
     "",
-    stripMdxSyntax(post.body ?? ""),
-    "",
-  ];
-
-  return textResponse(lines.join("\n"));
+    stripMdx(post.body ?? ""),
+  );
 }
 
 export function postsToLlmsItems(
@@ -150,9 +146,7 @@ export function postsToLlmsFullItems(
   formatUrl: (slug: string) => string,
 ): LlmsFullItem[] {
   return posts.map((post) => ({
-    title: post.data.title,
-    description: post.data.description,
-    link: formatUrl(post.slug),
+    ...postsToLlmsItems([post], formatUrl)[0],
     pubDate: post.data.pubDate,
     category: post.data.category,
     body: post.body ?? "",
