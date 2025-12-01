@@ -67,6 +67,8 @@ MCP isn't unnecessary. There are legitimate use cases:
 
 These are real problems MCP solves well. But they're not the typical case. Most database access, version control operations, and file operations already have excellent CLI tooling.
 
+> **Warning:** Before letting any agent run database commands, make sure you have a backup. Stories of agents wiping production databases are not urban legends. Use read-only connections where possible, sandbox test data, and never give write access to anything you can't restore.
+
 ## Check the CLI First
 
 Anthropic's conclusion is telling: they note that "many of the problems here feel novel (context management, tool composition, state persistence), they have known solutions from software engineering." They're right. Shell scripts, pipes, redirects, and the filesystem have solved them for decades.
