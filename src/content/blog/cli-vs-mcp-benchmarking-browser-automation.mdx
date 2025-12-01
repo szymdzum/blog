@@ -1,6 +1,6 @@
 ---
 title: "CLI vs MCP on Chrome DevTools Protocol"
-description: "I ran benchmarks comparing CLI tools against MCP servers for browser automation. 13x more token efficient with CLI. Here's what I found."
+description: "I ran benchmarks comparing CLI tools against MCP servers for browser automation. CLI scored 77/100 vs MCP's 60/100. Here's what I found."
 pubDate: 2025-11-23
 category: "opinion"
 tags: ["mcp", "cli", "browser-automation", "benchmarks", "ai-agents"]
@@ -22,7 +22,7 @@ featured: false
 import TldrBox from '@components/TldrBox.astro';
 
 <TldrBox>
-CLI tools used 13x fewer tokens than MCP for identical browser automation tasks. MCP returns full accessibility snapshots; CLI returns targeted queries. The gap compounds with complex workflows.
+CLI tools scored 77/100 versus MCP's 60/100 for browser automation tasks. Token efficiency favored CLI by 33%. The difference comes from selective queries vs full-page dumps, plus access to 300+ CDP methods that MCP structurally cannot expose.
 </TldrBox>
 
 Anthropic published an observation about [MCP and code execution](https://www.anthropic.com/engineering/code-execution-with-mcp): executable code in the filesystem might be more efficient for AI agents than protocol servers. Isn't that what CLI tools already are?
@@ -30,129 +30,68 @@ Anthropic published an observation about [MCP and code execution](https://www.an
 I tested this by comparing two approaches to browser automation:
 
 - **CLI**: [bdg](https://github.com/szymdzum/browser-debugger-cli), a browser debugger CLI I built
-- **MCP**: [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp), the official Chrome DevTools protocol server
+- **MCP**: [Chrome DevTools MCP](https://github.com/anthropic/mcp-server-browserbase), the official Chrome DevTools Protocol server
 
 Both interact with the Chrome DevTools Protocol. Same underlying capabilities. The question: does the interface matter?
 
 ## Methodology
 
-Fresh Claude instance (Sonnet 4.5) with zero prior knowledge of either tool. Identical tasks across three websites: Hacker News (navigation, extraction), CodePen (inspection, screenshots), Amazon (product data, anti-bot stress test). No human guidance.
+Fresh Claude instance (Sonnet 4.5) with zero prior knowledge of either tool. Five difficulty levels covering console errors, network analysis, form validation, memory profiling, and batch operations. No human guidance.
 
 **Full methodology**: [BENCHMARK_PROMPT.md](https://github.com/szymdzum/browser-debugger-cli/blob/main/docs/benchmarks/BENCHMARK_PROMPT.md)
 
 ## Results
 
-### Token Efficiency: 13x Difference
+### Overall Scores
 
-| Tool           | Total Tokens           | Per Test Average |
-| -------------- | ---------------------- | ---------------- |
-| **bdg (CLI)**  | 6,500                  | ~2,200           |
-| **Chrome MCP** | 85,500                 | ~28,500          |
-| **Difference** | **13x more efficient** |                  |
+| Tool | Score | Token Efficiency |
+|------|-------|------------------|
+| **bdg (CLI)** | 77/100 | 202.1 |
+| **Chrome MCP** | 60/100 | 152.3 |
+| **Difference** | +17 points | **33% better** |
 
-The gap comes from how each tool returns information:
+Total token consumption was similar (~38-39K), but CLI achieved better outcomes per token spent.
 
-**MCP**: Full accessibility snapshots. Every page state returns a complete accessibility tree. Amazon product page alone: **52,000 tokens** in one snapshot.
+### Where the Gap Shows
 
-**CLI**: Targeted queries. `bdg dom query ".athing"` returns 30 Hacker News stories in 1,200 tokens.
+**Error collection**: bdg captured 18 errors with complete stack traces. MCP managed 3 errors across 11 individual click operations.
 
-### Command Count
+**Form validation**: A form with 195 dropdown options consumed 15,200 tokens via MCP (full accessibility dump). bdg completed the same task in 3,500 tokens using selective queries.
 
-| Test        | bdg Commands | MCP Calls |
-| ----------- | ------------ | --------- |
-| Hacker News | 11           | 8         |
-| CodePen     | 6            | 5         |
-| Amazon      | 4            | 3         |
+**Memory profiling**: bdg provided heap snapshots and allocation tracking. MCP has no access to these CDP methods. For memory debugging, that's a dealbreaker.
 
-MCP requires slightly fewer calls. But when one approach uses 13x more tokens per call, command count becomes less relevant.
+## Why CLI Performed Better
 
-### Discovery: Zero-Knowledge Learning
+**Selective queries**: CLI enables targeted data retrieval rather than full-page dumps. That 195-option dropdown? 5,000 tokens via MCP snapshot, 50 tokens with a selective CLI query.
 
-The most interesting result was watching how the agent learned each tool.
+**Capability access**: CLI provided direct access to 300+ CDP methods: memory profiling, network HAR export, batch JavaScript execution. MCP exposes a curated subset.
 
-**bdg discovery path** (5 commands to first successful execution):
+**Predictable output**: CLI commands produce bounded, estimable token costs. MCP snapshots vary unpredictably based on page complexity.
 
-```bash
-bdg --help --json
-# Agent learns: 10 commands, exit codes, task mappings
+**Unix composability**: CLI outputs pipe naturally to `jq`, `grep`, `awk`. MCP responses require agent-side parsing.
 
-bdg cdp --list
-# Agent learns: 53 domains available
+## When MCP Might Excel
 
-bdg cdp Network --list
-# Agent learns: 39 methods in Network domain
+MCP has advantages in specific scenarios:
 
-bdg cdp --search cookie
-bdg cdp Network.getCookies --describe
-# Agent discovers parameters, return types, examples
+- **Cross-platform integration** where protocol standardization matters
+- **Sandboxed environments** requiring safety constraints
+- **Accessibility testing** where comprehensive tree dumps are genuinely useful
 
-bdg cdp Network.getCookies
-# Successful execution
-```
-
-Zero external documentation. The tool taught itself through introspection.
-
-**MCP discovery**: Requires understanding MCP protocol, parsing 10k+ token accessibility trees to find element UIDs, using UID-based selection from snapshots.
-
-### Element Selection
-
-**bdg**: Standard CSS selectors
-
-```bash
-bdg dom query ".athing"              # Hacker News stories
-bdg dom query "#productTitle"        # Amazon product
-bdg dom click "button[type=submit]"
-```
-
-**MCP**: UID-based from accessibility tree
-
-```javascript
-take_snapshot({}); // Returns 10k+ tokens
-click({ uid: '1_28' }); // Must find UID in snapshot first
-```
-
-CSS selectors are familiar; UID-based selection is more robust for dynamic content. Trade-offs exist.
-
-## Why the Gap Exists
-
-**Return payload size**: MCP's accessibility snapshots include everything. CLI queries return only what you ask for. This is the primary driver of the 13x difference.
-
-**Error handling**: CLI failures return structured errors with exit codes and suggestions. The agent can self-correct:
-
-```bash
-$ bdg dom click ".missing-button"
-Error: Element not found: .missing-button
-Exit code: 81 (user error)
-
-Suggestions:
-  - Verify selector: bdg dom query ".missing-button"
-  - List all buttons: bdg dom query "button"
-```
-
-**Composability**: CLI tools integrate with Unix:
-
-```bash
-bdg peek --network | jq '.[] | select(.status >= 400)'
-bdg dom query "button" | jq '.[0].nodeId' | xargs bdg dom click
-```
-
-If the tool doesn't provide exactly what you need, compose it with `jq`, `grep`, or `awk`. MCP servers require protocol extensions.
-
-**Protocol access**: bdg exposes all 644 CDP methods across 53 domains. MCP servers expose curated subsets. Need `Profiler.startPreciseCoverage`? It's there via `bdg cdp Profiler.startPreciseCoverage`.
+The accessibility tree approach isn't wrong. It optimizes for different constraints than developer debugging workflows.
 
 ## Limitations
 
-- **Small sample**: 3 websites
-- **Single model**: Claude Sonnet 4.5 only
-- **Specific scenarios**: Information extraction workflows
-- **Bot detection**: Both tools faced blocks on some sites
-
-The token efficiency advantage should apply equally to debugging workflows (console streaming, network inspection, profiling), but I didn't benchmark those specifically.
+- Single model: Claude Sonnet 4.5 only
+- Specific scenarios: Developer debugging workflows
+- Both tools faced bot detection on some sites
 
 ## Takeaway
 
-For browser automation with AI agents, CLI tools proved 13x more token-efficient than MCP servers accessing the same underlying protocol. The difference comes from targeted queries vs. full snapshots, plus the ability to compose with Unix tools and access the complete CDP surface.
+For developer debugging workflows, CLI provides more capability with better efficiency. MCP optimizes for protocol standardization and ecosystem integration.
+
+Tool designers targeting AI agents should prioritize selective queries over bulk dumps. The accessibility tree approach creates inefficient token consumption without improving utility for most debugging tasks.
 
 This isn't definitive. It's one data point. Your needs may differ.
 
-**Full results**: [BENCHMARK_RESULTS_2025-11-23.md](https://github.com/szymdzum/browser-debugger-cli/blob/main/docs/benchmarks/BENCHMARK_RESULTS_2025-11-23.md)
+**Full results**: [BENCHMARK_RESULTS.md](https://github.com/szymdzum/browser-debugger-cli/blob/main/docs/benchmarks/BENCHMARK_RESULTS.md)
