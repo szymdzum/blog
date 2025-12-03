@@ -1,0 +1,50 @@
+---
+// Tracks scroll depth milestones (25%, 50%, 75%, 100%) for article engagement
+---
+
+<script>
+  function initScrollTracking(): void {
+    const milestones = [25, 50, 75, 100];
+    const tracked = new Set<number>();
+
+    function getScrollPercent(): number {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight <= 0) return 100;
+      return Math.round((scrollTop / docHeight) * 100);
+    }
+
+    function checkMilestones(): void {
+      const percent = getScrollPercent();
+
+      for (const milestone of milestones) {
+        if (percent >= milestone && !tracked.has(milestone)) {
+          tracked.add(milestone);
+          if (typeof umami !== 'undefined') {
+            umami.track('scroll-depth', {
+              depth: milestone,
+              path: window.location.pathname,
+            });
+          }
+        }
+      }
+    }
+
+    // Throttle scroll handler
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          checkMilestones();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // Check initial position (in case page loads scrolled)
+    checkMilestones();
+  }
+
+  document.addEventListener('astro:page-load', initScrollTracking);
+</script>

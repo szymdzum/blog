@@ -28,6 +28,10 @@ const { title, description } = Astro.props;
         if (navigator.share) {
           try {
             await navigator.share({ title, text: description, url });
+            // Track native share
+            if (typeof umami !== 'undefined') {
+              umami.track('share', { method: 'native', path: window.location.pathname });
+            }
           } catch (err) {
             const isAbort = err instanceof Error && err.name === 'AbortError';
             if (!isAbort) {
@@ -42,6 +46,10 @@ const { title, description } = Astro.props;
               setTimeout(() => {
                 textSpan.textContent = 'Share';
               }, 2000);
+            }
+            // Track clipboard share
+            if (typeof umami !== 'undefined') {
+              umami.track('share', { method: 'clipboard', path: window.location.pathname });
             }
           } catch (err) {
             console.error('Fallback copy failed:', err);

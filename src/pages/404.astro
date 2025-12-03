@@ -1,0 +1,45 @@
+---
+export const prerender = false;
+
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { trackEvent } from "@utils/analytics";
+
+const referrer = Astro.request.headers.get("referer") ?? "";
+const requestedPath = Astro.url.pathname;
+
+trackEvent({
+  eventName: "404-not-found",
+  url: requestedPath,
+  title: "404 Not Found",
+  referrer,
+});
+---
+
+<BaseLayout title="Page Not Found" description="The page you're looking for doesn't exist.">
+  <article>
+    <header class="post-header">
+      <h1>404</h1>
+    </header>
+
+    <div class="prose">
+      <p>The page you're looking for doesn't exist or has been moved.</p>
+      <p><a href="/">Go back home</a></p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-header {
+    margin-bottom: var(--space-xl);
+    padding-bottom: calc(var(--space-xs) * 0.5);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+
+  .post-header h1 {
+    font-family: var(--font-family-display);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tighter);
+  }
+</style>

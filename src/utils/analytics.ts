@@ -20,7 +20,7 @@ interface TrackEventOptions {
  * to pass bot detection. The actual client User-Agent is stored in
  * event data for analysis.
  */
-function trackEvent(options: TrackEventOptions): void {
+export function trackEvent(options: TrackEventOptions): void {
   const { eventName, url, title, userAgent, referrer } = options;
 
   const payload = {

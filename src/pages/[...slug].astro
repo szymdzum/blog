@@ -11,6 +11,7 @@ import ArticleMeta from "@components/ArticleMeta.astro";
 import ArticleFooter from "@components/ArticleFooter.astro";
 import FurtherReading from "@components/FurtherReading.astro";
 import TableOfContents from "@components/TableOfContents.astro";
+import ScrollDepthTracker from "@components/ScrollDepthTracker.astro";
 import { getCollection, render } from "astro:content";
 import { estimateReadingTime, type BlogPost } from "@utils/posts";
 
@@ -89,6 +90,7 @@ const readingTime = estimateReadingTime(post.body);
     </article>
     <TableOfContents headings={headings} title={title} />
   </div>
+  <ScrollDepthTracker />
 </BaseLayout>
 
 <style>
