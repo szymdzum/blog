@@ -42,7 +42,8 @@ export function trackLlmsRequest(options: TrackEventOptions): void {
     headers: {
       "Content-Type": "application/json",
       "Origin": SITE_ORIGIN,
-      "User-Agent": "Mozilla/5.0 (compatible; KumakAnalytics/1.0)",
+      "User-Agent":
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     },
     body: JSON.stringify(payload),
   }).catch((error: unknown) => {
